@@ -20,7 +20,7 @@
                   </template>
 
                   <select v-model="form.selected_zone" class="form-control">
-                    <option v-for="item in zone" :key="item.ID" v-bind:value="item.ID">{{item.NAME}}</option>
+                    <option v-for="item in zone" :key="item.name" v-bind:value="item.name">{{item.name}}</option>
                   </select>
 
                   <b-form-invalid-feedback id="input-selected_zone-invalid">โซนบริเวณป่าไม้ที่จะเข้า</b-form-invalid-feedback>
@@ -49,18 +49,6 @@
                   Selected:
                   <strong>{{ form.objective }}</strong>
                 </div>
-
-                <!-- <b-form-group id="group-num-other" label-for="input-num-other">
-                  <template v-slot:label>อื่นๆ</template>
-
-                  <b-form-input
-                    id="input-num-other"
-                    type="text"
-                    v-model="form.other"
-                    :state="$v.form.other.$dirty ? !$v.form.other.$error : null"
-                    placeholder="อื่นๆ"
-                  ></b-form-input>
-                </b-form-group> -->
 
                 <template v-if="errorMessages">
                   <b-row class="mb-2">
@@ -133,7 +121,7 @@ export default {
         other: null,
         objective:[]
       },
-      zone: [{ id: 0, NAME: 'เลือกโซนบริเวณป่าไม้ที่จะเข้า' }]
+      zone: [{ id: 0, name: 'เลือกโซนบริเวณป่าไม้ที่จะเข้า' }]
     };
   },
   validations() {
