@@ -24,7 +24,10 @@ import {
     faTrashAlt,
     faLongArrowAltLeft,
     faSave,
-    faListAlt
+    faListAlt,
+    faUserSecret,
+    faTree,
+    faBars
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { Datetime } from 'vue-datetime';
@@ -33,6 +36,7 @@ import ConfigService from '@/services/configService';
 import 'leaflet/dist/leaflet.css';
 import LongdoMap from 'longdo-map-vue'
 import VueGoogleCharts from 'vue-google-charts'
+import Paginate from 'vuejs-paginate'
 
 
 
@@ -52,9 +56,12 @@ import 'vue2-datepicker/index.css';
 
 import 'vue2-datepicker/locale/zh-cn';
 
+Vue.component('paginate', Paginate)
+
 
 Vue.config.productionTip = false;
 
+Vue.use(require('vue-moment'));
 
 Vue.use(VueMeta, {
     // optional pluginOptions
@@ -86,11 +93,16 @@ library.add(
     faEdit,
     faLongArrowAltLeft,
     faSave,
-    faListAlt
+    faListAlt,
+    faUserSecret,
+    faTree,
+    faBars
 );
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.component('simple-layout', SimpleLayout);
 Vue.component('backend-layout', BackendLayout);
+
+
 
 ConfigService.loadConfig().then(() => {
     new Vue({
