@@ -31,5 +31,16 @@ export default {
             .catch(e => {
                 throw e;
             });
+    },
+    async getMapDetail(data) {
+        const url = `${configService.get('apiUrl')}/report/get_map_detail`;
+        return axios
+            .post(url, data)
+            .then(response => {
+                return response.data;
+            })
+            .catch(e => {
+                throw e;
+            });
     }
 };

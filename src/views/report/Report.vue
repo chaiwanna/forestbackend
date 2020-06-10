@@ -105,6 +105,10 @@ export default {
           filter.date_too = two;
         }
       }
+      if (this.form.user_id) {
+          filter.user_id = this.form.user_id;
+        
+      }
       const returnData = { filter };
       return returnData;
     },
