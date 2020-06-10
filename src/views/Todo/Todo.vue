@@ -14,15 +14,19 @@
           <date-picker v-model="form.time3" range v-on:change="showTime()"></date-picker>
         </div>
         <div class="col-xl-2">
-          <b-button type="submit" size="sm" variant="success" :disabled="loading">
-            <span class="spinner spinner-white" v-if="loading"></span>
+          <b-button type="submit" size="sm" variant="success" v-on:click="loadList()">
             <font-awesome-icon :icon="['fas', 'save']" class="mr-1" />ค้นหา
           </b-button>
         </div>
       </div>
       <br />
       <div class="card">
-        <h1 class="card-header">ประวัติการเข้าป่าไม้</h1>
+        <h1 class="card-header">
+          ประวัติการเข้าป่าไม้
+          <b-button size="sm" variant="primary" v-on:click="onDownload()">
+            <font-awesome-icon icon="download" class="mr-1" />ดาวน์โหลด Excel
+          </b-button>
+        </h1>
         <div class="card-body">
           <table class="table">
             <thead>
@@ -45,8 +49,15 @@
                 <td>{{formateDate(item.time)}}</td>
                 <td>{{formateTime(item.time)}}</td>
                 <td>
-                  <b-button size="sm" variant="danger" :disabled="loading">
-                    <span class="spinner spinner-white" v-if="loading"></span>
+                  <!-- <b-button size="sm" variant="danger">
+                    <font-awesome-icon icon="trash" class="mr-1" />
+                  </b-button>-->
+
+                  <b-button size="sm" variant="danger">
+                    <font-awesome-icon icon="trash" class="mr-1" />
+                  </b-button>
+
+                  <b-button size="sm" variant="danger">
                     <font-awesome-icon icon="trash" class="mr-1" />
                   </b-button>
                 </td>
@@ -81,18 +92,23 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import DatePicker from 'vue2-datepicker';
 import 'vue2-datepicker/index.css';
 import 'vue2-datepicker/locale/es/th';
 import moment from 'moment';
 import Layout from '../../components/Layout.vue';
 import forestAccessService from '../../services/forestAccessService';
+import reportService from '../../services/reportService';
 
 export default {
   name: 'History',
   components: {
     Layout,
     DatePicker
+  },
+  computed: {
+    ...mapState('auth', ['user'])
   },
   data() {
     return {
@@ -104,8 +120,8 @@ export default {
     };
   },
   methods: {
-    async getDataPaginate() {
-      this.dataPaginate = (await forestAccessService.getPaginate()).data.data;
+    async getDataPaginate(filter = {}) {
+      this.dataPaginate = (await forestAccessService.getPaginate(filter)).data.data;
     },
     formateDate(date) {
       return moment(String(date)).format('MM/DD/YYYY');
@@ -115,13 +131,50 @@ export default {
     },
     showTime() {
       console.log(this.form);
+    },
+    onDownload() {
+      let a;
+      if (this.user.role === 99) {
+        reportService.getExcel(JSON.stringify(this.createFilter())).then(res => {
+          window.open(res);
+        });
+      } else {
+        reportService.getExcel(JSON.stringify(this.createFilter())).then(res => {
+          window.open(res);
+        });
+      }
+      return a;
+    },
+    createFilter() {
+      const filter = {};
+      if (this.form.time3) {
+        const [one, two] = this.form.time3;
+        if (one) {
+          filter.date_from = one;
+        }
+        if (two) {
+          filter.date_too = two;
+        }
+      }
+      if (this.user.role !== 99) {
+        filter.user_id = this.user.id;
+        return {'filter':filter};
+      }
+      return {'filter':filter};
+    },
+    loadList() {
+      if (this.user.role === 99) {
+        this.getDataPaginate(this.createFilter());
+      } else {
+        this.getDataPaginate(this.createFilter());
+      }
     }
   },
-  created() {
-    this.getDataPaginate();
+  created() {},
+  mounted() {
+    this.createFilter();
+    this.loadList();
   },
-  mounted() {},
-  computed: {},
 
   watch: {}
 };

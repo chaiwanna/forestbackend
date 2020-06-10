@@ -1,5 +1,12 @@
 <template>
-  <div class="page-class page-home">
+<div>
+    <div class="row">
+      <div class="col-md-1"></div>
+      <div class="col-md-10">
+        <div class="card">
+          <h1 class="card-header">Dashboard</h1>
+          <div class="card-body">
+           <div class="page-class page-home">
     <div class="row justify-content-md-center">
       <h1>{{date.day}} {{month[date.month]}} {{date.year}}</h1>
     </div>
@@ -18,12 +25,12 @@
               <h1>{{dashboard.dashboard_access_per_day}} คน</h1>
             </div>
           </div>
-          <a class="card-footer text-white clearfix small z-1" href="#">
+          <router-link  class="card-footer text-white clearfix small z-1" :to="{path : '/report'}">
             <span class="float-left">View Details</span>
             <span class="float-right">
               <i class="fa fa-angle-right"></i>
             </span>
-          </a>
+          </router-link>
         </div>
       </div>
       <div class="col-xl-3 col-sm-6 mb-3">
@@ -39,14 +46,15 @@
               <h1>{{dashboard.dashboard_forest_care}} พื้นที่</h1>
             </div>
           </div>
-          <a class="card-footer text-white clearfix small z-1" href="#">
+          <router-link class="card-footer text-white clearfix small z-1" :to="{path : '/map'}">
             <span class="float-left">View Details</span>
             <span class="float-right">
               <i class="fa fa-angle-right"></i>
             </span>
-          </a>
+          </router-link>
         </div>
       </div>
+      <!-- more card style -->
       <!-- <div class="col-xl-3 col-sm-6 mb-3">
         <div class="card text-white bg-success o-hidden h-100">
           <div class="card-body">
@@ -78,9 +86,16 @@
             </span>
           </a>
         </div>
-      </div>-->
+      </div> -->
     </div>
   </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-1"></div>
+    </div>
+  </div>
+  
 </template>
 
 <script>

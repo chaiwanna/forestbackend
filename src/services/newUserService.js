@@ -5,7 +5,7 @@ import configService from '@/services/configService';
 
 export default {
     async getAll() {
-        const url = `${configService.get('apiUrl')}/forest_access`;
+        const url = `${configService.get('apiUrl')}/user_new`;
         return axios
             .get(url, {})
             .then(response => {
@@ -16,17 +16,4 @@ export default {
             });
     }
 
-    ,
-
-    async getPaginate(data = {}) {
-        const url = `${configService.get('apiUrl')}/forest_access`;
-        return axios
-            .post(url, data)
-            .then(response => {
-                return response.data;
-            })
-            .catch(e => {
-                throw e;
-            });
-    }
 };

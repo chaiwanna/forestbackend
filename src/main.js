@@ -27,7 +27,8 @@ import {
     faListAlt,
     faUserSecret,
     faTree,
-    faBars
+    faBars,
+    faDownload
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { Datetime } from 'vue-datetime';
@@ -96,7 +97,8 @@ library.add(
     faListAlt,
     faUserSecret,
     faTree,
-    faBars
+    faBars,
+    faDownload
 );
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.component('simple-layout', SimpleLayout);

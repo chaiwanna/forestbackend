@@ -1,24 +1,37 @@
 <template>
   <div>
-    <!-- <input type="date" name id />
+    <div class="row">
+      <div class="col-md-1"></div>
+      <div class="col-md-10">
+        <div class="card">
+          <h1 class="card-header">แผนที่</h1>
+          <div class="card-body">
+            <div>
+              <!-- <input type="date" name id />
     <input type="date" name id />
-    <button type="submit">submit</button>-->
-    <div class="container">
-      <div class="row justify-content-md-center">
-        <div class="col-xl-12">
-          <div id="app">
-            <longdo-map :center="center" :zoom="10" :lastView="false">
-              <longdo-map-marker
-                v-for="(item, i) in markers"
-                :key="i"
-                :location="item.location"
-                :title="item.title"
-                :detail="item.detail"
-              />
-            </longdo-map>
+              <button type="submit">submit</button>-->
+              <div class="container">
+                <div class="row justify-content-md-center">
+                  <div class="col-xl-12">
+                    <div id="app">
+                      <longdo-map :center="center" :zoom="10" :lastView="false">
+                        <longdo-map-marker
+                          v-for="(item, i) in markers"
+                          :key="i"
+                          :location="item.location"
+                          :title="item.title"
+                          :detail="item.detail"
+                        />
+                      </longdo-map>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+      <div class="col-md-1"></div>
     </div>
   </div>
 </template>

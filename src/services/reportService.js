@@ -14,5 +14,22 @@ export default {
             .catch(e => {
                 throw e;
             });
+    },
+
+    async getExcel(data = '') {
+        const url = `${configService.get('apiUrl')}/report/create_excel?param=${data}`;
+        return url
+    },
+
+    async getGraph(data) {
+        const url = `${configService.get('apiUrl')}/report/get_graph`;
+        return axios
+            .post(url, data)
+            .then(response => {
+                return response.data;
+            })
+            .catch(e => {
+                throw e;
+            });
     }
 };
