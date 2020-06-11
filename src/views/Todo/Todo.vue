@@ -21,6 +21,13 @@
           </div>
 
           <div class="form-group row">
+            <label for="inputsubdistricts" class="col-sm-2 col-form-label">ค้นหา :</label>
+            <div class="col-sm-4">
+              <input type="text" v-model="form.search" />
+            </div>
+          </div>
+
+          <div class="form-group row" v-if="user.role === 99">
             <label for="inputsubdistricts" class="col-sm-2 col-form-label">ค้นหาตามบุคคล :</label>
             <div class="col-sm-3">
               <select v-model="form.user_id" class="form-control">
@@ -58,9 +65,13 @@
             </thead>
             <tbody>
               <tr v-for="(item, index) in dataPaginate" :key="index">
-                <td>{{item.user[0].first_name}} {{item.user[0].last_name}}</td>
-                <td>{{item.user[0].numreg}}</td>
-                <td>ที่อยู่</td>
+                <td>{{item.user.first_name}} {{item.user.last_name}}</td>
+                <td>{{item.user.numreg}}</td>
+                <td>
+                  <p
+                    v-if="item.user.province_data && item.user.district_data && item.user.subdistrict_data"
+                  >เลขที่ {{item.user.numhome}} หมู่ {{item.user.nummoo}} {{item.user.province_data.name_in_thai}} {{item.user.district_data.name_in_thai}} {{item.user.subdistrict_data.name_in_thai}} {{item.user.subdistrict_data.zip_code}}</p>
+                </td>
                 <td>{{item.objective}}</td>
                 <td>{{formateDate(item.time)}}</td>
                 <td>{{formateTime(item.time)}}</td>
@@ -72,27 +83,9 @@
               </tr>
             </tbody>
           </table>
-          <!-- paginate -->
-          <!-- <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-end">
-              <li class="page-item disabled">
-                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#">1</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#">2</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#">3</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#">Next</a>
-              </li>
-            </ul>
-          </nav>-->
-          <!-- end paginate -->
+         <div class="row justify-content-md-center">
+                <b-button size="sm" variant="primary" v-on:click="addLimit()">โหลดเพิ่มเติม</b-button>
+              </div>
         </div>
       </div>
     </Layout>
@@ -126,7 +119,8 @@ export default {
         time3: null
       },
       dataPaginate: [],
-      userList: []
+      userList: [],
+      limit : 10
     };
   },
   methods: {
@@ -169,15 +163,16 @@ export default {
     },
     createFilter() {
       const filter = {};
+      filter.filter = {};
       if (this.form.time3) {
         const [one, two] = this.form.time3;
         if (one) {
           const date = new Date(one);
-          filter.date_from = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} 00:00:01`;
+          filter.filter.date_from = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} 00:00:01`;
         }
         if (two) {
           const date = new Date(two);
-          filter.date_too = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} 23:59:59`;
+          filter.filter.date_too = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} 23:59:59`;
         }
       }
       if (this.user.role !== 99) {
@@ -185,9 +180,13 @@ export default {
         return { filter };
       }
       if (this.form.user_id) {
-        filter.user_id = this.form.user_id;
+        filter.filter.user_id = this.form.user_id;
       }
-      return { filter };
+      if (this.form.search) {
+        filter.search = this.form.search
+      }
+      filter.limit = this.limit
+      return filter;
     },
     loadList() {
       if (this.user.role === 99) {
@@ -195,6 +194,10 @@ export default {
       } else {
         this.getDataPaginate(this.createFilter());
       }
+    },
+    addLimit(){
+      this.limit += 10
+      this.loadList()
     }
   },
   created() {},
