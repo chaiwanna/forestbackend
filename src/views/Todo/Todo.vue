@@ -15,7 +15,7 @@
                 variant="success"
                 v-on:click="loadList()"
               >
-                <font-awesome-icon :icon="['fas', 'save']" class="mr-1" />ค้นหา
+                <font-awesome-icon :icon="['fas', 'search']" class="mr-1" />ค้นหา
               </b-button>
            
           </div>

@@ -251,7 +251,19 @@
                   </b-row>
                 </template>
 
-                <b-row>
+                <div class="forn-group">
+                  <button type="submit" class="btn btn-success btn-block" :disabled="loading">
+                    <span class="spinner spinner-white" v-if="loading"></span>
+                    บันทึก
+                  </button>
+                  <button
+                    type="button"
+                    @click="onRedirectToHome()"
+                    class="btn btn-secondary btn-block"
+                    href="/"
+                  >กลับ</button>
+                </div>
+                <!-- <b-row>
                   <b-col>
                     <b-button type="submit" size="sm" variant="success" :disabled="loading">
                       <span class="spinner spinner-white" v-if="loading"></span>
@@ -263,7 +275,7 @@
                       <font-awesome-icon :icon="['fas', 'long-arrow-alt-left']" class="mr-1" />กลับ
                     </b-button>
                   </b-col>
-                </b-row>
+                </b-row>-->
               </b-form>
             </div>
           </div>
@@ -329,7 +341,7 @@ export default {
         postman: null,
         password: null,
         confirmedAt: '2020-05-13 13:13:00',
-        blockedAt:  null,
+        blockedAt: null,
         permissions: [3, 2, 4, 1],
         role: 50,
         enabled: 1
@@ -495,11 +507,13 @@ export default {
         // console.log(this.subdistricts);
       });
     },
-       postUser(id) {
-      axios.post(`http://localhost:3000/staff`,id).then(response => {
-          console.log(response);
-          
+    postUser(id) {
+      axios.post(`http://localhost:3000/staff`, id).then(response => {
+        console.log(response);
       });
+    },
+    onRedirectToHome() {
+      this.$router.push('/login');
     },
     onSubmit() {
       // this.$v.$touch();
@@ -527,15 +541,15 @@ export default {
         password: this.form.password,
         confirmed_at: this.form.confirmedAt,
         blocked_at: this.form.blockedAt,
-        role: this.form.role ,
+        role: this.form.role,
         permissions: this.form.permissions,
         enabled: this.form.enabled
       };
-     this.postUser(user);
-       window.location.reload();
-     
-        // this.$emit('add', { user });
-    
+      this.postUser(user);
+      window.location.reload();
+
+      // this.$emit('add', { user });
+
       return false;
     },
     setFormPermissions() {
@@ -622,6 +636,6 @@ h1 {
   padding-right: 5%;
 }
 .btn {
-  margin-top: 30px;
+  margin-top: 10px;
 }
 </style>
