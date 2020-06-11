@@ -86,7 +86,7 @@ export default {
         },
         {
           name: 'รายงาน',
-          route: '/report',
+          route: '/history',
           auth: [99],
           cy: 'nav-bar-todo',
           icon: ['fas', 'list-alt']
@@ -101,7 +101,7 @@ export default {
         {
           name: 'ประวัติการเข้าป่าไม้',
           route: '/history',
-          auth: [50, 99],
+          auth: [50],
           cy: 'nav-bar-todo',
           icon: ['fas', 'list-alt']
         }

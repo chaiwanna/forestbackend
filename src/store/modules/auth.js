@@ -25,7 +25,7 @@ const actions = {
                 if (response.data.role === 99) {
                     router.push('/');
                 } else {
-                    router.push('/history');
+                    router.push('/information');
                 }
             })
             .catch(e => {

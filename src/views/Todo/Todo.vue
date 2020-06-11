@@ -1,24 +1,40 @@
 <template>
   <div class="history">
     <Layout>
-      <!-- <b-form-group id="group-search " label-for="input-search ">
-          <b-form-input
-            id="input-search"
-            v-model="form.search"
-            type="text"
-            placeholder="ค้นหาข้อมูล"
-          ></b-form-input>
-      </b-form-group>-->
       <div class="row">
-        <div class="col-xl-4">
-          <date-picker v-model="form.time3" range v-on:change="showTime()"></date-picker>
-        </div>
-        <div class="col-xl-2">
-          <b-button type="submit" size="sm" variant="success" v-on:click="loadList()">
-            <font-awesome-icon :icon="['fas', 'save']" class="mr-1" />ค้นหา
-          </b-button>
+        <div class="col-xl-12">
+          <div class="form-group row">
+            <label for="inputsubdistricts" class="col-sm-2 col-form-label">เลือกช่วงเวลา :</label>
+            <div class="col-sm-4">
+              <date-picker v-model="form.time3" range></date-picker>
+            </div>
+              <b-button
+                class="col-sm-2"
+                type="submit"
+                size="sm"
+                variant="success"
+                v-on:click="loadList()"
+              >
+                <font-awesome-icon :icon="['fas', 'save']" class="mr-1" />ค้นหา
+              </b-button>
+           
+          </div>
+
+          <div class="form-group row">
+            <label for="inputsubdistricts" class="col-sm-2 col-form-label">ค้นหาตามบุคคล :</label>
+            <div class="col-sm-3">
+              <select v-model="form.user_id" class="form-control">
+                <option
+                  v-for="item in userList"
+                  :key="item.id"
+                  v-bind:value="item.id"
+                >{{item.first_name}} {{item.last_name}}</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
+
       <br />
       <div class="card">
         <h1 class="card-header">
@@ -37,7 +53,7 @@
                 <th>วัตถุประสงค์ในการเข้าไปในพื้นที่ป่า</th>
                 <th>วันที่เข้าป่า</th>
                 <th>เวลาที่เข้าป่า</th>
-                <th>จัดการ</th>
+                <th v-if="user.role === 99">จัดการ</th>
               </tr>
             </thead>
             <tbody>
@@ -48,16 +64,8 @@
                 <td>{{item.objective}}</td>
                 <td>{{formateDate(item.time)}}</td>
                 <td>{{formateTime(item.time)}}</td>
-                <td>
-                  <!-- <b-button size="sm" variant="danger">
-                    <font-awesome-icon icon="trash" class="mr-1" />
-                  </b-button>-->
-
-                  <b-button size="sm" variant="danger">
-                    <font-awesome-icon icon="trash" class="mr-1" />
-                  </b-button>
-
-                  <b-button size="sm" variant="danger">
+                <td v-if="user.role === 99">
+                  <b-button size="sm" variant="danger" v-on:click="onDelete(item.id)">
                     <font-awesome-icon icon="trash" class="mr-1" />
                   </b-button>
                 </td>
@@ -99,6 +107,7 @@ import 'vue2-datepicker/locale/es/th';
 import moment from 'moment';
 import Layout from '../../components/Layout.vue';
 import forestAccessService from '../../services/forestAccessService';
+import userService from '../../services/newUserService';
 import reportService from '../../services/reportService';
 
 export default {
@@ -116,12 +125,25 @@ export default {
         search: null,
         time3: null
       },
-      dataPaginate: []
+      dataPaginate: [],
+      userList: []
     };
   },
   methods: {
     async getDataPaginate(filter = {}) {
       this.dataPaginate = (await forestAccessService.getPaginate(filter)).data.data;
+    },
+    async loadUserList() {
+      const data = await userService.getAll();
+      this.userList = data.data;
+    },
+    async deleteRow(id) {
+      const res = await forestAccessService.deleteById(id);
+      return res;
+    },
+    async onDelete(id) {
+      await this.deleteRow(id);
+      await this.getDataPaginate(this.createFilter());
     },
     formateDate(date) {
       return moment(String(date)).format('MM/DD/YYYY');
@@ -150,17 +172,22 @@ export default {
       if (this.form.time3) {
         const [one, two] = this.form.time3;
         if (one) {
-          filter.date_from = one;
+          const date = new Date(one);
+          filter.date_from = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} 00:00:01`;
         }
         if (two) {
-          filter.date_too = two;
+          const date = new Date(two);
+          filter.date_too = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} 23:59:59`;
         }
       }
       if (this.user.role !== 99) {
         filter.user_id = this.user.id;
-        return {'filter':filter};
+        return { filter };
       }
-      return {'filter':filter};
+      if (this.form.user_id) {
+        filter.user_id = this.form.user_id;
+      }
+      return { filter };
     },
     loadList() {
       if (this.user.role === 99) {
@@ -172,6 +199,7 @@ export default {
   },
   created() {},
   mounted() {
+    this.loadUserList();
     this.createFilter();
     this.loadList();
   },

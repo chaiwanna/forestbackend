@@ -12,7 +12,7 @@
 
                 <div class="form-group row">
                   <label for="inputsubdistricts" class="col-sm-2 col-form-label">เลือกช่วงเวลา :</label>
-                  <div class="col-sm-3">
+                  <div class="col-sm-4">
                     <date-picker v-model="form.time3" range></date-picker>
                   </div>
                   <b-button class="col-sm-2" type="submit" size="sm" variant="success" v-on:click="getForest()">
@@ -107,10 +107,12 @@ export default {
       if (this.form.time3) {
         const [one, two] = this.form.time3;
         if (one) {
-          filter.date_from = one;
+          const date = new Date(one);
+          filter.date_from = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()} 00:00:01`;
         }
         if (two) {
-          filter.date_too = two;
+          const date =  new Date(two);
+          filter.date_too = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()} 23:59:59`;
         }
       }
       if (this.form.user_id) {

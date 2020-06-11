@@ -28,5 +28,16 @@ export default {
             .catch(e => {
                 throw e;
             });
+    },
+    async deleteById(id) {
+        const url = `${configService.get('apiUrl')}/forest_access/${id}`;
+        return axios
+            .delete(url)
+            .then(response => {
+                return response.data;
+            })
+            .catch(e => {
+                throw e;
+            });
     }
 };
