@@ -15,7 +15,7 @@
                     <date-picker v-model="form.time3" range></date-picker>
                   </div>
                   <b-button class="col-sm-2" type="submit" size="sm" variant="success" v-on:click="loadData()">
-                  <font-awesome-icon :icon="['fas', 'save']" class="mr-1" />ค้นหา
+                  <font-awesome-icon :icon="['fas', 'search']" class="mr-1" />ค้นหา
                 </b-button>
                 </div>
 

@@ -13,7 +13,7 @@
             </b-card>
           </b-card-group>
           <br />
-          &copy; {{ thisYear }}
+         
         </b-col>
       </b-row>
     </b-container>

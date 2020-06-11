@@ -61,19 +61,19 @@
                   </b-row>
                 </template>
 
-                <b-row>
-                  <b-col>
-                    <b-button type="submit" size="sm" variant="success" :disabled="loading">
-                      <span class="spinner spinner-white" v-if="loading"></span>
-                      <font-awesome-icon :icon="['fas', 'save']" class="mr-1" />Save
-                    </b-button>
-                  </b-col>
-                  <b-col class="text-right">
-                    <b-button size="sm" variant="warning" href="/">
-                      <font-awesome-icon :icon="['fas', 'long-arrow-alt-left']" class="mr-1" />กลับ
-                    </b-button>
-                  </b-col>
-                </b-row>
+
+                <div class="forn-group">
+                <button type="submit" class="btn btn-success btn-block" :disabled="loading">
+                  <span class="spinner spinner-white" v-if="loading"></span>
+                  บันทึก</button>
+                <button
+                  type="button"
+                  @click="onRedirectToHome()"
+                  class="btn btn-secondary btn-block"
+                  href="/"
+                >ยกเลิก</button>
+              </div>
+             
               </b-form>
             </div>
           </div>
@@ -256,6 +256,9 @@ export default {
       this.postforest(userforest);
       return false;
     },
+    onRedirectToHome() {
+      this.$router.push("/information");
+    },
     setFormPermissions() {
       if (this.formLoaded) {
         if (this.formType === 'new') {
@@ -317,6 +320,6 @@ h1 {
   padding-right: 5%;
 }
 .btn {
-  margin-top: 30px;
+  margin-top: 10px;
 }
 </style>

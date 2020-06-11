@@ -105,11 +105,6 @@
 
               <div class="forn-group">
                 <button type="submit" class="btn btn-success btn-block">บันทึก</button>
-                <button
-                  type="button"
-                  @click="onRedirectToHome()"
-                  class="btn btn-secondary btn-block"
-                >ยกเลิก</button>
               </div>
             </form>
           </div>
@@ -212,7 +207,10 @@ mounted(){
         console.log(this.subdistricts);
       });
     },
-
+  // ไปหน้าลงทะเบียน
+    onRedirectToHome() {
+      this.$router.push("/information");
+    },
     onSubmit() {
       const updateUser = {
         username: this.form.username,
@@ -259,10 +257,7 @@ mounted(){
     }
 
 };
-    // ไปหน้าลงทะเบียน
-    // onRedirectToHome() {
-    //   this.$router.push("/");
-    // }
+  
  
 
 </script>
@@ -287,6 +282,6 @@ h1 {
   padding-right: 5%;
 }
 .btn {
-  margin-top: 30px;
+  margin-top: 10px;
 }
 </style>
