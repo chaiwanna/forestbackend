@@ -80,6 +80,7 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
 import { required, minLength } from 'vuelidate/lib/validators';
+import CryptoJS from 'crypto-js';
 import router from '@/router';
 
 export default {
@@ -108,15 +109,23 @@ export default {
       // Already logged in
       this.logout({ router, silent: true });
     }
+    if (this.$route.query.user) {
+      // Decrypt
+      const data = this.$route.query.user
+      
+      const decryptedData = JSON.parse(this.dec(data));
+      console.log(decryptedData);
+      this.loginWithHash({ username: decryptedData.username, password: decryptedData.password_hash, router });
+    }
+        
   },
-   
   computed: {
     ...mapGetters('alert', ['errorMessages', 'successMessages']),
     ...mapState('auth', ['loading']),
     ...mapGetters('auth', ['isLoggedIn'])
   },
   methods: {
-    ...mapActions('auth', ['login', 'logout']),
+    ...mapActions('auth', ['login', 'logout','loginWithHash']),
     onSubmit() {
       this.$v.form.$touch();
       if (this.$v.form.$anyError) {
@@ -125,6 +134,13 @@ export default {
 
       // Form submit logic
       this.login({ username: this.form.username, password: this.form.password, router });
+    },
+    dec(cipherText) {
+      const reb64 = CryptoJS.enc.Hex.parse(cipherText);
+      const bytes = reb64.toString(CryptoJS.enc.Base64);
+      const decrypt = CryptoJS.AES.decrypt(bytes, 'SECRET');
+      const plain = decrypt.toString(CryptoJS.enc.Utf8);
+      return plain;
     }
   }
 };

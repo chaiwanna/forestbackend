@@ -8,16 +8,15 @@
             <div class="col-sm-4">
               <date-picker v-model="form.time3" range></date-picker>
             </div>
-              <b-button
-                class="col-sm-2"
-                type="submit"
-                size="sm"
-                variant="success"
-                v-on:click="loadList()"
-              >
-                <font-awesome-icon :icon="['fas', 'search']" class="mr-1" />ค้นหา
-              </b-button>
-           
+            <b-button
+              class="col-sm-2"
+              type="submit"
+              size="sm"
+              variant="success"
+              v-on:click="loadList()"
+            >
+              <font-awesome-icon :icon="['fas', 'search']" class="mr-1" />ค้นหา
+            </b-button>
           </div>
 
           <div class="form-group row">
@@ -58,6 +57,7 @@
                 <th>เลขประจำตัวประชาชน</th>
                 <th>ที่อยู่</th>
                 <th>วัตถุประสงค์ในการเข้าไปในพื้นที่ป่า</th>
+                <th style="min-width:70px">พิ้นที่</th>
                 <th>วันที่เข้าป่า</th>
                 <th>เวลาที่เข้าป่า</th>
                 <th v-if="user.role === 99">จัดการ</th>
@@ -72,7 +72,8 @@
                     v-if="item.user.province_data && item.user.district_data && item.user.subdistrict_data"
                   >เลขที่ {{item.user.numhome}} หมู่ {{item.user.nummoo}} {{item.user.province_data.name_in_thai}} {{item.user.district_data.name_in_thai}} {{item.user.subdistrict_data.name_in_thai}} {{item.user.subdistrict_data.zip_code}}</p>
                 </td>
-                <td>{{item.objective}}</td>
+                <td>{{item.objective}} {{item.other}}</td>
+                <td style="min-width:70px">{{item.forest_detail.name}}</td>
                 <td>{{formateDate(item.time)}}</td>
                 <td>{{formateTime(item.time)}}</td>
                 <td v-if="user.role === 99">
@@ -83,9 +84,9 @@
               </tr>
             </tbody>
           </table>
-         <div class="row justify-content-md-center">
-                <b-button size="sm" variant="primary" v-on:click="addLimit()">โหลดเพิ่มเติม</b-button>
-              </div>
+          <div class="row justify-content-md-center">
+            <b-button size="sm" variant="primary" v-on:click="addLimit()">โหลดเพิ่มเติม</b-button>
+          </div>
         </div>
       </div>
     </Layout>
@@ -132,18 +133,20 @@ export default {
       this.userList = data.data;
     },
     async deleteRow(id) {
-      const res = await forestAccessService.deleteById(id);
+      await this.$confirm(`ยืนยันการลบข้อมูล?`).then(async () => {
+        const res = await forestAccessService.deleteById(id);
       return res;
+});
     },
     async onDelete(id) {
       await this.deleteRow(id);
       await this.getDataPaginate(this.createFilter());
     },
     formateDate(date) {
-      return moment(String(date)).format('MM/DD/YYYY');
+      return moment(String(date)).format('DD/MM/YYYY');
     },
     formateTime(date) {
-      return moment(String(date)).format('hh:mm');
+      return moment(String(date)).format('HH:mm');
     },
     showTime() {
       console.log(this.form);

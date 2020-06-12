@@ -12,6 +12,28 @@ const state = {
 };
 
 const actions = {
+    loginWithHash({ dispatch, commit }, { username, password, router }) {
+        dispatch('alert/clear', {}, { root: true });
+        commit('startRequest');
+
+        authService
+            .loginHash(username, password)
+            .then(response => {
+                commit('loginSuccess', { authKey: response.data.auth_key });
+                dispatch('alert/success', { showType: 'toast', title: response.message }, { root: true });
+
+                if (response.data.role === 99) {
+                    router.push('/');
+                } else {
+                    router.push('/registerForest');
+                }
+            })
+            .catch(e => {
+                commit('loginFailure');
+
+                dispatch('common/handleServiceException', { e, router }, { root: true });
+            });
+    },
     login({ dispatch, commit }, { username, password, router }) {
         dispatch('alert/clear', {}, { root: true });
         commit('startRequest');
@@ -25,7 +47,7 @@ const actions = {
                 if (response.data.role === 99) {
                     router.push('/');
                 } else {
-                    router.push('/information');
+                    router.push('/registerForest');
                 }
             })
             .catch(e => {

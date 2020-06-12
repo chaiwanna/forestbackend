@@ -22,13 +22,13 @@
               <div class="form-group row">
                 <label for="inputname" class="col-sm-6 col-form-label">ชื่อ :</label>
                 <div class="col-sm-6">
-                   <input type="text" v-model.trim="form.FIRSTNAME" class="form-control" />
+                  <input type="text" v-model.trim="form.FIRSTNAME" class="form-control" />
                 </div>
               </div>
               <div class="form-group row">
                 <label for="inputlastname" class="col-sm-6 col-form-label">นามสกุล :</label>
                 <div class="col-sm-6">
-                   <input type="text" v-model.trim="form.LASTNAME" class="form-control" />
+                  <input type="text" v-model.trim="form.LASTNAME" class="form-control" />
                 </div>
               </div>
               <div class="form-group row">
@@ -70,10 +70,10 @@
                 </div>
               </div>
 
-                 <div class="form-group row">
+              <div class="form-group row">
                 <label for="inputdistricts" class="col-sm-6 col-form-label">อำเภอ :</label>
                 <div class="col-sm-6">
-                   <select v-model="form.selected_districts" class="form-control">
+                  <select v-model="form.selected_districts" class="form-control">
                     <option
                       v-for="item in districts"
                       :key="item.id"
@@ -86,7 +86,7 @@
               <div class="form-group row">
                 <label for="inputsubdistricts" class="col-sm-6 col-form-label">ตำบล :</label>
                 <div class="col-sm-6">
-                   <select v-model="form.selected_subdistricts" class="form-control">
+                  <select v-model="form.selected_subdistricts" class="form-control">
                     <option
                       v-for="item in subdistricts"
                       :key="item.id"
@@ -107,6 +107,11 @@
                 <button type="submit" class="btn btn-success btn-block">บันทึก</button>
               </div>
             </form>
+            <br />
+            <h1>QR CODE สำหรับ login</h1>
+            <div class="row justify-content-md-center">
+              <qrcode :value="qrUrl" :options="{ width: 200 }"></qrcode>
+            </div>
           </div>
         </div>
       </div>
@@ -120,6 +125,7 @@
 import axios from 'axios';
 import _ from 'lodash';
 import { mapState } from 'vuex';
+import CryptoJS from 'crypto-js';
 import User from '../../model/user';
 
 export default {
@@ -145,17 +151,20 @@ export default {
       },
       provinces: [{ id: 0, name_in_thai: 'เลือกจังหวัด' }],
       districts: [{ id: 0, name_in_thai: 'เลือกอำเภอ' }],
-      subdistricts: [{ id: 0, name_in_thai: 'เลือกตำบล' }]
-    
+      subdistricts: [{ id: 0, name_in_thai: 'เลือกตำบล' }],
+      qrcodeData: {
+        username: '',
+        password_hash: ''
+      },
+      qrUrl: ''
     };
   },
-mounted(){
-  this.getUser(this.user.id);
-  this.getProvinces();
-  this.getDistricts(this.form.selected_provinces);
-  this.getSubdistricts(this.form.selected_districts);
-   
-},
+  mounted() {
+    this.getUser(this.user.id);
+    this.getProvinces();
+    this.getDistricts(this.form.selected_provinces);
+    this.getSubdistricts(this.form.selected_districts);
+  },
   methods: {
     showNavigation(permissionKey) {
       if (this.user.role === User.userRole.administrator) {
@@ -166,29 +175,27 @@ mounted(){
     getUser(id) {
       axios.get(`http://localhost:3000/staff/${id}`).then(response => {
         // this.user = response.data.data;
-         this.form.NUMREG = response.data.data.numreg;
-         this.form.TEL = response.data.data.tel;
-         this.form.FIRSTNAME = response.data.data.first_name;
-         this.form.LASTNAME = response.data.data.last_name;
-         this.form.NICKNAME = response.data.data.nick_name;
-         this.form.BLOOD = response.data.data.blood;
-         this.form.NUMHOME = response.data.data.numhome;
-         this.form.NUMMOO = response.data.data.nummoo;
-         this.form.selected_districts = response.data.data.districts;
-         this.form.selected_subdistricts = response.data.data.subdistricts;
-         this.form.selected_provinces = response.data.data.province;
-         this.form.ZIPCODE = response.data.data.postman;
-         
-        console.log(response.data);
+        this.form.NUMREG = response.data.data.numreg;
+        this.form.TEL = response.data.data.tel;
+        this.form.FIRSTNAME = response.data.data.first_name;
+        this.form.LASTNAME = response.data.data.last_name;
+        this.form.NICKNAME = response.data.data.nick_name;
+        this.form.BLOOD = response.data.data.blood;
+        this.form.NUMHOME = response.data.data.numhome;
+        this.form.NUMMOO = response.data.data.nummoo;
+        this.form.selected_districts = response.data.data.districts;
+        this.form.selected_subdistricts = response.data.data.subdistricts;
+        this.form.selected_provinces = response.data.data.province;
+        this.form.ZIPCODE = response.data.data.postman;
+        this.qrcodeData.username = response.data.data.username;
+        this.qrcodeData.password_hash = response.data.data.password_hash;
+        this.getDataQR();
       });
     },
-      updateUser(form,userid) {
-      axios.patch(`http://localhost:3000/staff/${userid}`,form).then(response => {
-        // this.user = response.data.data;
-        console.log(response);
-      });
+    updateUser(form, userid) {
+      axios.patch(`http://localhost:3000/staff/${userid}`, form);
     },
-      getProvinces() {
+    getProvinces() {
       axios.get('http://localhost:3000/country/provinces').then(response => {
         this.provinces = this.provinces.concat(response.data.data);
         console.log(this.provinces);
@@ -197,7 +204,7 @@ mounted(){
     getDistricts(id) {
       axios.get(`http://localhost:3000/country/districts/${id}`).then(response => {
         this.districts = this.districts.concat(response.data.data);
-         console.log(this.districts);
+        console.log(this.districts);
       });
     },
     getSubdistricts(id) {
@@ -207,9 +214,9 @@ mounted(){
         console.log(this.subdistricts);
       });
     },
-  // ไปหน้าลงทะเบียน
+    // ไปหน้าลงทะเบียน
     onRedirectToHome() {
-      this.$router.push("/information");
+      this.$router.push('/information');
     },
     onSubmit() {
       const updateUser = {
@@ -218,7 +225,7 @@ mounted(){
         first_name: this.form.FIRSTNAME,
         last_name: this.form.LASTNAME,
         nick_name: this.form.NICKNAME,
-        numreg:  this.form.NUMREG,
+        numreg: this.form.NUMREG,
         tel: this.form.TEL,
         numhome: this.form.NUMHOME,
         nummoo: this.form.NUMMOO,
@@ -229,23 +236,30 @@ mounted(){
         password: this.form.password,
         confirmed_at: this.form.confirmedAt,
         blocked_at: this.form.blockedAt,
-        role: this.form.role ,
+        role: this.form.role,
         permissions: this.form.permissions,
         enabled: this.form.enabled
       };
-     this.updateUser(updateUser,this.user.id);
-      //  window.location.reload();
-      // console.log(this.form);
-      
-      // console.log(updateUser);
-      
-     
-        // this.$emit('add', { user });
-    
+      this.updateUser(updateUser, this.user.id);
       return false;
-      }
+    },
+    getDataQR() {
+      this.qrUrl = 'http://localhost:8081/login?user=';
+      const data = this.qrcodeData;
+      // Encrypt
+      const encryptedData = this.enc(JSON.stringify(data))
+      this.qrUrl += encryptedData;
+      console.log(this.qrUrl);
+    },
+    enc(plainText) {
+      const b64 = CryptoJS.AES.encrypt(plainText, 'SECRET').toString();
+      const e64 = CryptoJS.enc.Base64.parse(b64);
+      const eHex = e64.toString(CryptoJS.enc.Hex);
+      return eHex;
+    }
+
   },
-   watch: {
+  watch: {
     'form.selected_provinces': function(val) {
       this.districts = [];
       this.getDistricts(val);
@@ -254,12 +268,8 @@ mounted(){
       this.subdistricts = [];
       this.getSubdistricts(val);
     }
-    }
-
+  }
 };
-  
- 
-
 </script>
 <style scoped>
 .name-system {

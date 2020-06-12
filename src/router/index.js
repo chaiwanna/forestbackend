@@ -27,6 +27,15 @@ const router = new Router({
             }
         },
         {
+            path: '/login:user',
+            name: 'loginUser',
+            component: () =>
+                import ( /* webpackChunkName: "login" */ '../views/Login.vue'),
+            meta: {
+                layout: 'simple-layout'
+            }
+        },
+        {
             path: '/history',
             name: 'history',
             component: () =>
