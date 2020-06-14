@@ -34,7 +34,7 @@ const actions = {
                 dispatch('common/handleServiceException', { e, router }, { root: true });
             });
     },
-    login({ dispatch, commit }, { username, password, router }) {
+    login({ dispatch, commit }, { username, password, router, qa = false }) {
         dispatch('alert/clear', {}, { root: true });
         commit('startRequest');
 
@@ -43,7 +43,13 @@ const actions = {
             .then(response => {
                 commit('loginSuccess', { authKey: response.data.auth_key });
                 dispatch('alert/success', { showType: 'toast', title: response.message }, { root: true });
-
+                if (qa) {
+                    const isTrueSet = (qa === 'true');
+                    if (isTrueSet) {
+                        router.push('/quick_access');
+                        return
+                    }
+                }
                 if (response.data.role === 99) {
                     router.push('/');
                 } else {

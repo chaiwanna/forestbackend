@@ -15,7 +15,7 @@
               variant="success"
               v-on:click="loadList()"
             >
-              <font-awesome-icon :icon="['fas', 'search']" class="mr-1" />ค้นหา
+              <font-awesome-icon icon="search" class="mr-1" />ค้นหา
             </b-button>
           </div>
 
@@ -60,7 +60,7 @@
                 <th style="min-width:70px">พิ้นที่</th>
                 <th>วันที่เข้าป่า</th>
                 <th>เวลาที่เข้าป่า</th>
-                <th v-if="user.role === 99">จัดการ</th>
+                <th>จัดการ</th>
               </tr>
             </thead>
             <tbody>
@@ -79,6 +79,16 @@
                 <td v-if="user.role === 99">
                   <b-button size="sm" variant="danger" v-on:click="onDelete(item.id)">
                     <font-awesome-icon icon="trash" class="mr-1" />
+                  </b-button>
+                </td>
+                <td v-if="user.role !== 99">
+                  <b-button
+                    size="sm"
+                    variant="warning"
+                    v-on:click="onCheckOut(item.id)"
+                    v-if="item.status_id===0"
+                  >
+                    <font-awesome-icon :icon="['fas','sign-out-alt']" class="mr-1" />ลงชื่อออก
                   </b-button>
                 </td>
               </tr>
@@ -121,7 +131,7 @@ export default {
       },
       dataPaginate: [],
       userList: [],
-      limit : 10
+      limit: 10
     };
   },
   methods: {
@@ -135,8 +145,8 @@ export default {
     async deleteRow(id) {
       await this.$confirm(`ยืนยันการลบข้อมูล?`).then(async () => {
         const res = await forestAccessService.deleteById(id);
-      return res;
-});
+        return res;
+      });
     },
     async onDelete(id) {
       await this.deleteRow(id);
@@ -164,6 +174,13 @@ export default {
       }
       return a;
     },
+    async onCheckOut(id) {
+      await this.$confirm(`ยืนยันการลบข้อมูล?`).then(async () => {
+        const res = await forestAccessService.updateById(id,{status_id:2});
+      this.loadList()
+        return res;
+      });
+    },
     createFilter() {
       const filter = {};
       filter.filter = {};
@@ -178,17 +195,18 @@ export default {
           filter.filter.date_too = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} 23:59:59`;
         }
       }
+      filter.limit = this.limit;
+      if (this.form.search) {
+        filter.search = this.form.search;
+      }
+
       if (this.user.role !== 99) {
         filter.user_id = this.user.id;
-        return { filter };
+        return filter;
       }
       if (this.form.user_id) {
         filter.filter.user_id = this.form.user_id;
       }
-      if (this.form.search) {
-        filter.search = this.form.search
-      }
-      filter.limit = this.limit
       return filter;
     },
     loadList() {
@@ -198,9 +216,9 @@ export default {
         this.getDataPaginate(this.createFilter());
       }
     },
-    addLimit(){
-      this.limit += 10
-      this.loadList()
+    addLimit() {
+      this.limit += 10;
+      this.loadList();
     }
   },
   created() {},

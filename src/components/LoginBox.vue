@@ -17,9 +17,7 @@
         id="input-username-invalid"
         data-cy="login-username-invalid"
         class="invalid-feedback invalid-feedback-username"
-      >
-        Please enter your username or email address.
-      </b-form-invalid-feedback>
+      >Please enter your username or email address.</b-form-invalid-feedback>
     </b-form-group>
 
     <b-form-group id="group-password" label label-for="input-password" description>
@@ -39,19 +37,25 @@
         id="input-password-invalid"
         data-cy="login-password-invalid"
         class="invalid-feedback invalid-feedback-password"
-      >
-        Please enter your password.
-      </b-form-invalid-feedback>
+      >Please enter your password.</b-form-invalid-feedback>
     </b-form-group>
 
     <template v-if="successMessages || errorMessages">
       <b-row class="mb-2">
-        <b-col v-if="successMessages" data-cy="login-success-message" class="text-primary message-col">{{
+        <b-col
+          v-if="successMessages"
+          data-cy="login-success-message"
+          class="text-primary message-col"
+        >
+          {{
           successMessages
-        }}</b-col>
-        <b-col v-if="errorMessages" data-cy="login-error-message" class="text-danger message-col">{{
+          }}
+        </b-col>
+        <b-col v-if="errorMessages" data-cy="login-error-message" class="text-danger message-col">
+          {{
           errorMessages
-        }}</b-col>
+          }}
+        </b-col>
       </b-row>
     </template>
 
@@ -67,11 +71,7 @@
           <span class="spinner spinner-white" v-if="loading"></span>
           Login
         </b-button>
-             <b-button  
-                 href="/register/new"
-                  class="btn btn-secondary btn-block">
-          Register
-        </b-button>
+        <b-button :to="{path:`/register/new${isQA}`}" class="btn btn-secondary btn-block">Register</b-button>
       </b-col>
     </b-row>
   </b-form>
@@ -90,7 +90,8 @@ export default {
       form: {
         username: '',
         password: ''
-      }
+      },
+      isQA:''
     };
   },
   validations: {
@@ -111,13 +112,13 @@ export default {
     }
     if (this.$route.query.user) {
       // Decrypt
-      const data = this.$route.query.user
-      
+      const data = this.$route.query.user;
       const decryptedData = JSON.parse(this.dec(data));
-      console.log(decryptedData);
       this.loginWithHash({ username: decryptedData.username, password: decryptedData.password_hash, router });
     }
-        
+    if(this.$route.query.qa){
+      this.isQA = `?qa=true`
+    }
   },
   computed: {
     ...mapGetters('alert', ['errorMessages', 'successMessages']),
@@ -125,7 +126,7 @@ export default {
     ...mapGetters('auth', ['isLoggedIn'])
   },
   methods: {
-    ...mapActions('auth', ['login', 'logout','loginWithHash']),
+    ...mapActions('auth', ['login', 'logout', 'loginWithHash']),
     onSubmit() {
       this.$v.form.$touch();
       if (this.$v.form.$anyError) {
@@ -133,7 +134,7 @@ export default {
       }
 
       // Form submit logic
-      this.login({ username: this.form.username, password: this.form.password, router });
+      this.login({ username: this.form.username, password: this.form.password, router , qa:this.$route.query.qa });
     },
     dec(cipherText) {
       const reb64 = CryptoJS.enc.Hex.parse(cipherText);

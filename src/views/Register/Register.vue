@@ -513,6 +513,10 @@ export default {
       });
     },
     onRedirectToHome() {
+      if (this.$route.query.qa) {
+        this.$router.push('/login?qa=true');
+        return;
+      }
       this.$router.push('/login');
     },
     onSubmit() {
@@ -546,8 +550,25 @@ export default {
         enabled: this.form.enabled
       };
       this.postUser(user);
-      window.location.reload();
-
+      this.form.username = null;
+      this.form.email = null;
+      this.form.firstName = null;
+      this.form.lastName = null;
+      this.form.nickname = null;
+      this.form.numreg = null;
+      this.form.tel = null;
+      this.form.numhome = null;
+      this.form.nummoo = null;
+      this.form.selected_provinces = 0;
+      this.form.selected_districts = 0;
+      this.form.selected_subdistricts = 0;
+      this.form.postman = null;
+      this.form.password = null;
+      this.form.confirmedAt = null;
+      this.form.blockedAt = null;
+      this.form.role = null;
+      this.form.permissions = null;
+      this.form.enable = null;
       // this.$emit('add', { user });
 
       return false;

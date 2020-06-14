@@ -61,19 +61,18 @@
                   </b-row>
                 </template>
 
-
                 <div class="forn-group">
-                <button type="submit" class="btn btn-success btn-block" :disabled="loading">
-                  <span class="spinner spinner-white" v-if="loading"></span>
-                  บันทึก</button>
-                <button
-                  type="button"
-                  @click="onRedirectToHome()"
-                  class="btn btn-secondary btn-block"
-                  href="/"
-                >ยกเลิก</button>
-              </div>
-             
+                  <button type="submit" class="btn btn-success btn-block" :disabled="loading">
+                    <span class="spinner spinner-white" v-if="loading"></span>
+                    บันทึก
+                  </button>
+                  <button
+                    type="button"
+                    @click="onRedirectToHome()"
+                    class="btn btn-secondary btn-block"
+                    href="/"
+                  >ยกเลิก</button>
+                </div>
               </b-form>
             </div>
           </div>
@@ -179,6 +178,9 @@ export default {
     return { form: formValidation };
   },
   mounted() {
+    if (this.$route.query.forest_id) {
+      this.form.selected_zone = this.$route.query.forest_id;
+    }
     this.getZone();
     this.getUser(this.user.id);
     this.$nextTick(async () => {
@@ -224,6 +226,15 @@ export default {
 
     postforest(id) {
       axios.post('http://localhost:3000/getregisterforest', id).then(response => {
+        console.log(response);
+        if (this.$route.query.forest_id) {
+          let id = localStorage.forestAccessByQuickAccess; 
+          if (id === undefined) {
+            id = ''
+          }
+          id +=`${response.data.data.id},`
+          localStorage.forestAccessByQuickAccess = id;
+        }
         if (response.data.success === true) {
           this.makeToast('บันทึกสำเร็จ', 'success');
           this.resetPage();
@@ -239,9 +250,9 @@ export default {
     },
     makeToast(massage, variant = null) {
       const config = {
-        'title': `ข้อความ`,
-        'variant': variant,
-        'solid': true
+        title: `ข้อความ`,
+        variant,
+        solid: true
       };
       this.$bvToast.toast(massage, config);
     },
@@ -257,7 +268,7 @@ export default {
       return false;
     },
     onRedirectToHome() {
-      this.$router.push("/information");
+      this.$router.push('/information');
     },
     setFormPermissions() {
       if (this.formLoaded) {

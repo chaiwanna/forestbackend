@@ -194,6 +194,16 @@ const router = new Router({
                 layout: 'backend-layout',
                 requiresAuth: true
             }
+        },
+        {
+            path: '/quick_access',
+            name: 'quick_access',
+            component: () =>
+                import ( /* webpackChunkName: "setting" */ '../views/quickAccess/QuickAccess.vue'),
+            meta: {
+                layout: 'backend-layout'
+                    // requiresAuth: true
+            }
         }
 
 
