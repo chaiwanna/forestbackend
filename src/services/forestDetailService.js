@@ -28,5 +28,16 @@ export default {
             .catch(e => {
                 throw e;
             });
+    },
+    async getById(id) {
+        const url = `${configService.get('apiUrl')}/forest_detail/${id}`;
+        return axios
+            .get(url)
+            .then(response => {
+                return response.data;
+            })
+            .catch(e => {
+                throw e;
+            });
     }
 };
