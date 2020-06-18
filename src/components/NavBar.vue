@@ -140,24 +140,24 @@ export default {
           icon: ['fas', 'map-marked-alt']
         },
         {
-          name: 'รายงาน',
+          name: 'กราฟ',
           auth: [99],
           cy: 'nav-bar-todo',
-          icon: ['fas', 'list-alt'],
+          icon: ['fas', 'chart-bar'],
           child: [
             {
               name: 'จำนวนคนเข้าป่า',
               route: '/report',
               auth: [99],
-              cy: 'nav-bar-todo',
-              icon: ['fas', 'list-alt']
+              cy: 'nav-bar-todo'
+             
             },
             {
               name: 'วัตถุประสงเข้าป่า',
               route: '/report/obj',
               auth: [99],
-              cy: 'nav-bar-todo',
-              icon: ['fas', 'list-alt']
+              cy: 'nav-bar-todo'
+             
             }
           ]
         },
