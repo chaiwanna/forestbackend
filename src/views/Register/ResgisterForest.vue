@@ -51,6 +51,7 @@
                     <b-form-checkbox value="ยอดผัก">ยอดผัก</b-form-checkbox>
                     <b-form-checkbox value="ใบไม้">ใบไม้</b-form-checkbox>
                     <b-form-checkbox value="ไม้ไผ่">ไม้ไผ่</b-form-checkbox>
+                    <b-form-checkbox value="สำรวจป่าไม้(ท่องเที่ยว)">สำรวจป่าไม้(ท่องเที่ยว)</b-form-checkbox>
                   </b-form-checkbox-group>
                 </b-form-group>
                 <b-form-input v-model="form.other" placeholder="อื่นๆ"></b-form-input>

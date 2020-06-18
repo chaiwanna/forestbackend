@@ -13,9 +13,7 @@
                   <div class="col-sm-4">
                     <date-picker v-model="form.time3" range></date-picker>
                   </div>
-                  <b-button class="col-sm-2" type="submit" size="sm" variant="success" v-on:click="loadData()">
-                  <font-awesome-icon :icon="['fas', 'search']" class="mr-1" />ค้นหา
-                </b-button>
+                 
                 </div>
 
                 <div v-if="user.role === 99">
@@ -31,15 +29,7 @@
                       </select>
                     </div>
                     <div class="col-sm-1"></div>
-                    <b-button
-                      class="col-sm-2"
-                      type="submit"
-                      size="sm"
-                      variant="success"
-                      v-on:click="download()"
-                    >
-                      <font-awesome-icon :icon="['fas', 'search']" class="mr-1" />ดาวโหลด excel
-                    </b-button>
+                  
                   </div>
                 </div>
                 <div class="form-group row">
@@ -53,10 +43,21 @@
                       >{{item.name}}</option>
                     </select>
                   </div>
-                  
+                   <b-button class="col-sm-1" type="submit" size="sm" variant="success" v-on:click="loadData()">
+                  <font-awesome-icon :icon="['fas', 'search']" class="mr-1" />ค้นหา
+                </b-button>
                 </div>
               </div>
             </div>
+              <b-button
+                      class="col-sm-2"
+                      type="submit"
+                      size="sm"
+                      variant="success"
+                      v-on:click="download()"
+                    >
+                      <font-awesome-icon icon="download" class="mr-1" />ดาวโหลด excel
+                    </b-button>
             <div class="row">
               <div class="col-md-12">
                 <GChart

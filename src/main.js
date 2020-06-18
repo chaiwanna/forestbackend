@@ -33,6 +33,7 @@ import {
     faQrcode,
     faMapMarkedAlt,
     faUserAlt,
+    faChartBar,
     faHome
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -110,6 +111,7 @@ library.add(
     faSearch,
     faHome,
     faUserAlt,
+    faChartBar,
     faMapMarkedAlt,
     faQrcode
 );
