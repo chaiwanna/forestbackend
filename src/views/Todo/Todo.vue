@@ -3,6 +3,12 @@
     <Layout>
       <div class="row">
         <div class="col-xl-12">
+            <div class="form-group row">
+            <label for="inputsubdistricts" class="col-sm-2 col-form-label">ค้นหา :</label>
+            <div class="col-sm-4">
+              <input type="text" v-model="form.search" />
+            </div>
+          </div>
           <div class="form-group row">
             <label for="inputsubdistricts" class="col-sm-2 col-form-label">เลือกช่วงเวลา :</label>
             <div class="col-sm-4">
@@ -19,14 +25,9 @@
             </b-button>
           </div>
 
-          <div class="form-group row">
-            <label for="inputsubdistricts" class="col-sm-2 col-form-label">ค้นหา :</label>
-            <div class="col-sm-4">
-              <input type="text" v-model="form.search" />
-            </div>
-          </div>
+        
 
-          <div class="form-group row" v-if="user.role === 99">
+          <!-- <div class="form-group row" v-if="user.role === 99">
             <label for="inputsubdistricts" class="col-sm-2 col-form-label">ค้นหาตามบุคคล :</label>
             <div class="col-sm-3">
               <select v-model="form.user_id" class="form-control">
@@ -37,7 +38,7 @@
                 >{{item.first_name}} {{item.last_name}}</option>
               </select>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
 

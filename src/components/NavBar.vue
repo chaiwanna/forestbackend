@@ -82,7 +82,7 @@
                 data-cy="nav-bar-logout"
                 style="background-color: #e0e0e0;"
               >
-                <font-awesome-icon :icon="['fas', 'sign-out-alt']" class="mr-1" />Logout
+                <font-awesome-icon :icon="['fas', 'sign-out-alt']" class="mr-1" />ออกจากระบบ
               </b-nav-item>
             </b-nav>
           </nav>
@@ -109,14 +109,14 @@ export default {
           route: '/',
           auth: [99],
           cy: 'nav-bar-dashboard',
-          icon: ['fas', 'tachometer-alt']
+          icon: ['fas', 'home']
         },
         {
           name: 'ดูข้อมูลส่วนตัว',
           route: '/information',
           auth: [50, 99],
           cy: 'nav-bar-todo',
-          icon: ['fas', 'list-alt']
+          icon: ['fas', 'user']
         },
         {
           name: 'ลงทะเบียนเข้าป่าไม้',
@@ -137,7 +137,7 @@ export default {
           route: '/map',
           auth: [99],
           cy: 'nav-bar-todo',
-          icon: ['fas', 'list-alt']
+          icon: ['fas', 'map-marked-alt']
         },
         {
           name: 'รายงาน',

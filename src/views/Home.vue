@@ -83,7 +83,7 @@
                             <font-awesome-icon icon="tree" />
                           </div>
                           <div class="mr-5">
-                            <h3>ป่า {{item.name}}</h3>
+                            <h3>บริเวณโซนหมู่บ้าน {{item.name}}</h3>
                           </div>
                           <div class="mr-5">
                             <h1>{{item.count}} คน</h1>
@@ -118,10 +118,10 @@
       header-text-variant="light"
     >
       <div class="row justify-content-md-center">
-        <qrcode
-          :value="`http://localhost:3000/quick_access?forest_id=${selectQR}`"
-          :options="{ width: 200 }"
-        ></qrcode>
+      <qrcode
+        :value="`http://localhost:8081/quick_access?forest_id=${selectQR}`"
+        :options="{ width: 200 }"
+      ></qrcode>
       </div>
     </b-modal>
   </div>

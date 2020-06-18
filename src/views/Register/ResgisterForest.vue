@@ -43,7 +43,7 @@
                     <b-form-checkbox value="เห็ดลม">เห็ดลม</b-form-checkbox>
                     <br />
                     <b-form-checkbox value="เห็ดกระด้าง">เห็ดกระด้าง</b-form-checkbox>
-                    <b-form-checkbox value="เห็ดถอบ">เห็ดถอบ</b-form-checkbox>
+                    <b-form-checkbox value="เห็ดเผาะ">เห็ดเผาะ</b-form-checkbox>
                     <b-form-checkbox value="สมุนไพร">สมุนไพร</b-form-checkbox>
                     <b-form-checkbox value="ผลไม้ป่า">ผลไม้ป่า</b-form-checkbox>
                     <b-form-checkbox value="ไม้ฟืน">ไม้ฟืน</b-form-checkbox>
@@ -70,7 +70,7 @@
                     type="button"
                     @click="onRedirectToHome()"
                     class="btn btn-secondary btn-block"
-                    href="/"
+                    
                   >ยกเลิก</button>
                 </div>
               </b-form>
@@ -268,7 +268,7 @@ export default {
       return false;
     },
     onRedirectToHome() {
-      this.$router.push('/information');
+      this.$router.push('/quick_access');
     },
     setFormPermissions() {
       if (this.formLoaded) {

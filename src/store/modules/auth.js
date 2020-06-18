@@ -67,7 +67,7 @@ const actions = {
         commit('logout');
 
         if (!silent) {
-            dispatch('alert/success', { showType: 'toast', title: 'You are successfully logged out.' }, { root: true });
+            dispatch('alert/success', { showType: 'toast', title: 'ออกจากระบบ' }, { root: true });
 
             // https://github.com/vuejs/vue-router/issues/2881#issuecomment-520554378
             router.push('/').catch(_e => {});
