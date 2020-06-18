@@ -13,9 +13,16 @@
                   <div class="col-sm-4">
                     <date-picker v-model="form.time3" range></date-picker>
                   </div>
-                  <b-button class="col-sm-2" type="submit" size="sm" variant="success" v-on:click="loadData()">
-                  <font-awesome-icon :icon="['fas', 'search']" class="mr-1" />ค้นหา
-                </b-button>
+                  
+                  <b-button
+                    class="col-sm-2"
+                    type="submit"
+                    size="sm"
+                    variant="success"
+                    v-on:click="loadData()"
+                  >
+                    <font-awesome-icon :icon="['fas', 'search']" class="mr-1" />ค้นหา
+                  </b-button>
                 </div>
 
                 <div v-if="user.role === 99">
@@ -31,6 +38,7 @@
                       </select>
                     </div>
                     <div class="col-sm-1"></div>
+
                     <b-button
                       class="col-sm-2"
                       type="submit"
@@ -53,7 +61,6 @@
                       >{{item.name}}</option>
                     </select>
                   </div>
-                  
                 </div>
               </div>
             </div>
@@ -61,7 +68,7 @@
               <div class="col-md-12">
                 <GChart
                   v-if="chartData.length > 1"
-                  type="LineChart"
+                  type="ColumnChart"
                   :data="chartData"
                   :options="chartOptions"
                 />
@@ -98,7 +105,7 @@ export default {
         search: null,
         time3: null,
         user_id: null,
-        id:null
+        id: null
       },
       userList: [],
       // Array will be automatically processed with visualization.arrayToDataTable function
@@ -110,13 +117,12 @@ export default {
           // subtitle: 'Sales, Expenses, and Profit: 2014-2017'
         },
         vAxis: { minValue: 0 }
-      },      forestList : []
-
+      },
+      forestList: []
     };
   },
   mounted() {
-        this.loadForestList();
-
+    this.loadForestList();
     this.loadData();
     this.loadUserList();
   },
@@ -124,26 +130,22 @@ export default {
     download() {
       let a;
       if (this.user.role === 99) {
-        reportService.getExcelGraph(JSON.stringify(this.createFilter())).then(res => {
+        reportService.getExcelObj(JSON.stringify(this.createFilter())).then(res => {
           window.open(res);
         });
       } else {
-        reportService.getExcelGraph(JSON.stringify(this.createFilter())).then(res => {
+        reportService.getExcelObj(JSON.stringify(this.createFilter())).then(res => {
           window.open(res);
         });
       }
       return a;
     },
-    async loadForestList(){
-      const data = await forestDetailService.getAll();
-      this.forestList = data.data
-    },
     async loadData() {
-      const data = await reportService.getGraph(this.createFilter());
+      const data = await reportService.getGraphObj(this.createFilter());
       console.log(data.data);
-      this.chartData = [['เวลา', 'จำนวน']];
+      this.chartData = [['วัตถุประสงค์', 'จำนวน']];
       data.data.forEach(element => {
-        this.chartData.push([element.time, element.count]);
+        this.chartData.push([element.name, element.count]);
       });
       console.log(this.chartData);
     },
@@ -163,8 +165,8 @@ export default {
       if (this.form.user_id) {
         filter.user_id = this.form.user_id;
       }
-      if(this.form.id){
-        filter['forest_access.forest_detail_id'] = this.form.id
+      if (this.form.id) {
+        filter['forest_access.forest_detail_id'] = this.form.id;
       }
       const returnData = { filter };
       return returnData;
@@ -172,6 +174,10 @@ export default {
     async loadUserList() {
       const data = await userService.getAll();
       this.userList = data.data;
+    },
+    async loadForestList() {
+      const data = await forestDetailService.getAll();
+      this.forestList = data.data;
     }
   }
 };

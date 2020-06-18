@@ -196,6 +196,16 @@ const router = new Router({
             }
         },
         {
+            path: '/report/obj',
+            name: 'report_obj',
+            component: () =>
+                import ( /* webpackChunkName: "setting" */ '../views/report/ReportObj.vue'),
+            meta: {
+                layout: 'backend-layout',
+                requiresAuth: true
+            }
+        },
+        {
             path: '/quick_access',
             name: 'quick_access',
             component: () =>
