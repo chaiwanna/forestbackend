@@ -15,12 +15,10 @@
                   <div class="col-sm-4">
                     <date-picker v-model="form.time3" range></date-picker>
                   </div>
-                  <b-button class="col-sm-2" type="submit" size="sm" variant="success" v-on:click="getForest()">
-                  <font-awesome-icon :icon="['fas', 'save']" class="mr-1" />ค้นหา
-                </b-button>
+                  
                 </div>
 
-                <div class="form-group row">
+                <!-- <div class="form-group row">
                   <label for="inputsubdistricts" class="col-sm-2 col-form-label">ค้นหาตามบุคคล :</label>
                   <div class="col-sm-3">
                     <select v-model="form.user_id" class="form-control">
@@ -32,7 +30,7 @@
                     </select>
                   </div>
                   
-                </div>
+                </div> -->
 
                 <div class="form-group row">
                   <label for="inputsubdistricts" class="col-sm-2 col-form-label">พื้นที่ :</label>
@@ -45,6 +43,9 @@
                       >{{item.name}}</option>
                     </select>
                   </div>
+                  <b-button class="col-sm-2" type="submit" size="sm" variant="success" v-on:click="getForest()">
+                  <font-awesome-icon :icon="['fas', 'search']" class="mr-1" />ค้นหา
+                </b-button>
                   
                 </div>
 

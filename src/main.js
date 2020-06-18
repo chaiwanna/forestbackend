@@ -30,7 +30,10 @@ import {
     faBars,
     faDownload,
     faSearch,
-    faQrcode
+    faQrcode,
+    faMapMarkedAlt,
+    faUserAlt,
+    faHome
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { Datetime } from 'vue-datetime';
@@ -105,6 +108,9 @@ library.add(
     faBars,
     faDownload,
     faSearch,
+    faHome,
+    faUserAlt,
+    faMapMarkedAlt,
     faQrcode
 );
 Vue.component('font-awesome-icon', FontAwesomeIcon);
