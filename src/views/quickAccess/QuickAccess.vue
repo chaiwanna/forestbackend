@@ -6,16 +6,16 @@
       <div style="width:100%;text-align: center;">
         <h1>ยินดีต้อนรับ</h1>
         <h3 v-if="user">{{ user.first_name }}</h3>
-        <h3>ท่านกำลังลงชื่อเข้าใช้ {{forestDetail[0].name}}</h3>
+        <h3 v-if="forestDetail">ท่านกำลังลงชื่อเข้าใช้พื้นที่ {{forestDetail[0].name}}</h3>
         <div class="row justify-content-md-center">
-          <h2 v-if="!user">โปรด log in เพื่อ ใช้งานระบบ</h2>
+          <h2 v-if="!user">โปรด เข้าสู่ระบบ เพื่อ ใช้งานระบบ</h2>
         </div>
         <br />
         <div class="row justify-content-md-center">
           <router-link class="col-sm-1" :to="{path : '/login?qa=true'}" v-if="!user">
             <button class="btn btn-primary col-sm-12" v-if="!user">ลงชื่อเข้าใช้</button>
           </router-link>
-          <router-link class="col-sm-1" :to="{path : '/map'}" v-if="user">
+          <router-link class="col-sm-1" :to="{path : '/logout'}" v-if="user">
             <button class="btn btn-danger">ออกจากระบบ</button>
           </router-link>
         </div>

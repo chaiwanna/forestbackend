@@ -6,7 +6,7 @@
         v-model="form.username"
         type="text"
         required
-        placeholder="Enter username"
+        placeholder="ชื่อผู้ใช้งาน"
         :state="$v.form.username.$dirty ? !$v.form.username.$error : null"
         data-cy="login-username"
         class="from-input input-username"
@@ -17,7 +17,7 @@
         id="input-username-invalid"
         data-cy="login-username-invalid"
         class="invalid-feedback invalid-feedback-username"
-      >Please enter your username or email address.</b-form-invalid-feedback>
+      >โปรดกรอกชื่อผู้ใช้งาน</b-form-invalid-feedback>
     </b-form-group>
 
     <b-form-group id="group-password" label label-for="input-password" description>
@@ -26,7 +26,7 @@
         type="password"
         v-model="form.password"
         required
-        placeholder="Enter password"
+        placeholder="รหัสผ่าน"
         :state="$v.form.password.$dirty ? !$v.form.password.$error : null"
         data-cy="login-password"
         class="from-input input-password"
@@ -37,7 +37,7 @@
         id="input-password-invalid"
         data-cy="login-password-invalid"
         class="invalid-feedback invalid-feedback-password"
-      >Please enter your password.</b-form-invalid-feedback>
+      >โปรดกรอกรหัสผ่าน</b-form-invalid-feedback>
     </b-form-group>
 
     <template v-if="successMessages || errorMessages">
@@ -69,9 +69,9 @@
           :disabled="$v.form.$invalid || loading"
         >
           <span class="spinner spinner-white" v-if="loading"></span>
-          Login
+          เข้าสู่ระบบ
         </b-button>
-        <b-button :to="{path:`/register/new${isQA}`}" class="btn btn-secondary btn-block">Register</b-button>
+        <b-button :to="{path:`/register/new${isQA}`}" class="btn btn-secondary btn-block">ลงทะเบียน</b-button>
       </b-col>
     </b-row>
   </b-form>

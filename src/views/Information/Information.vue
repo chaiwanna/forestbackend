@@ -194,6 +194,7 @@ export default {
     },
     updateUser(form, userid) {
       axios.patch(`http://localhost:3000/staff/${userid}`, form);
+      this.makeToast('บันทึกสำเร็จ','success')
     },
     getProvinces() {
       axios.get('http://localhost:3000/country/provinces').then(response => {
@@ -241,8 +242,18 @@ export default {
         enabled: this.form.enabled
       };
       this.updateUser(updateUser, this.user.id);
+      
       return false;
     },
+     makeToast(massage, variant = null) {
+      const config = {
+        title: `ข้อความ`,
+        variant,
+        solid: true
+      };
+      this.$bvToast.toast(massage, config);
+    },
+    
     getDataQR() {
       this.qrUrl = 'http://localhost:8081/login?user=';
       const data = this.qrcodeData;

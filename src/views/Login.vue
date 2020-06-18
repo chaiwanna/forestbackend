@@ -7,7 +7,7 @@
 
           <b-card-group deck class="mt-3">
             <b-card>
-              <h1>Login</h1>
+              <h1>เข้าสู่ระบบ</h1>
               <p class="text-muted"></p>
               <login-box />
             </b-card>
