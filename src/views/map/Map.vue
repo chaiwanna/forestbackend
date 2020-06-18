@@ -112,7 +112,7 @@ export default {
         search: null,
         time3: null,
         user_id:null,
-        id:null
+        id:0
       },
       userList : [],
       forestList : []
@@ -137,7 +137,7 @@ export default {
           filter.user_id = this.form.user_id;
         
       }
-      if(this.form.id){
+      if(this.form.id && this.form.id !== 0){
         filter.id = this.form.id
       }
       const returnData = { filter };
@@ -165,7 +165,17 @@ export default {
       this.userList = data.data
     },async loadForestList(){
       const data = await forestDetailService.getAll();
-      this.forestList = data.data
+      this.forestList = [];
+      this.forestList.push({
+        area: null,
+        id: 0,
+        latitude: 19.198,
+        longitude: 100.203,
+        name: 'ทั้งหมด'
+      });
+      (data.data).forEach(element => {
+        this.forestList.push(element)
+      });
     }
   },
   mounted() {

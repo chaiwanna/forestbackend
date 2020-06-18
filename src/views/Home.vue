@@ -61,6 +61,18 @@
                   </div>
                 </div>
               </div>
+              <div class="form-group row">
+                <label for="inputsubdistricts" class="col-sm-2 col-form-label">พื้นที่ :</label>
+                <div class="col-sm-3">
+                  <select v-model="form.id" class="form-control">
+                    <option
+                      v-for="item in forestList"
+                      :key="item.id"
+                      v-bind:value="item.id"
+                    >{{item.name}}</option>
+                  </select>
+                </div>
+              </div>
               <div class="row">
                 <template v-for="(item, index) in dashboard.dashboard_access_forest_detail">
                   <span :key="index" class="col-xl-3 col-sm-6 mb-3">
@@ -77,7 +89,11 @@
                             <h1>{{item.count}} คน</h1>
                           </div>
                         </div>
-                        <div class="card-footer text-white clearfix small z-1" v-on:click="changeSelectQR(item.id)" v-b-modal.modal-1>
+                        <div
+                          class="card-footer text-white clearfix small z-1"
+                          v-on:click="changeSelectQR(item.id)"
+                          v-b-modal.modal-1
+                        >
                           <span class="float-left">ดาวน์โหลด QRcode</span>
                           <span class="float-right">
                             <font-awesome-icon :icon="['fas','qrcode']" />
@@ -94,7 +110,13 @@
       </div>
       <div class="col-md-1"></div>
     </div>
-    <b-modal id="modal-1" title="QR Code" hide-footer header-bg-variant="success" header-text-variant="light">
+    <b-modal
+      id="modal-1"
+      title="QR Code"
+      hide-footer
+      header-bg-variant="success"
+      header-text-variant="light"
+    >
       <div class="row justify-content-md-center">
       <qrcode
         :value="`http://localhost:8081/quick_access?forest_id=${selectQR}`"
@@ -106,6 +128,7 @@
 </template>
 
 <script>
+import forestDetailService from '../services/forestDetailService';
 import reportService from '../services/reportService';
 
 export default {
@@ -146,19 +169,61 @@ export default {
         month: new Date().getMonth(),
         year: new Date().getFullYear() + 543
       },
-      selectQR:1
+      selectQR: 1,
+      forestList: [],
+      form: {
+        id: 0
+      }
     };
   },
   methods: {
+    createFilter() {
+      const filter = {};
+      if (this.form.id && this.form.id !== 0) {
+        filter['forest_detail.id'] = this.form.id;
+      }
+      const returnData = { filter };
+      return returnData;
+    },
+    async loadForestList() {
+      const data = await forestDetailService.getAll();
+      this.forestList = [];
+      this.forestList.push({
+        area: null,
+        id: 0,
+        latitude: 19.198,
+        longitude: 100.203,
+        name: 'ทั้งหมด'
+      });
+      (data.data).forEach(element => {
+        this.forestList.push(element)
+      });
+    },
     async getDashboard() {
+      const filter = this.createFilter();
+      console.log(filter);
+
+      function isEmptyObject(obj) {
+        return JSON.stringify(obj) === '{}';
+      }
+      if (!isEmptyObject(filter.filter)) {
+        this.dashboard = (await reportService.getReport(JSON.stringify(this.createFilter()))).data;
+        return;
+      }
       this.dashboard = (await reportService.getReport()).data;
     },
-    changeSelectQR(id){
-      this.selectQR = id
+    changeSelectQR(id) {
+      this.selectQR = id;
     }
   },
   mounted() {
+    this.loadForestList();
     this.getDashboard();
+  },
+  watch: {
+    'form.id': function() {
+      this.getDashboard();
+    }
   }
 };
 </script>
