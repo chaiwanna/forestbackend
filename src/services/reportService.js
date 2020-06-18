@@ -4,8 +4,11 @@ import configService from '@/services/configService';
 // import utils from '@/helper/utils';
 
 export default {
-    async getReport() {
-        const url = `${configService.get('apiUrl')}/report/dash_board`;
+    async getReport(data) {
+        let url = `${configService.get('apiUrl')}/report/dash_board`;
+        if (data) {
+            url = `${configService.get('apiUrl')}/report/dash_board?param=${data}`;
+        }
         return axios
             .get(url, {})
             .then(response => {

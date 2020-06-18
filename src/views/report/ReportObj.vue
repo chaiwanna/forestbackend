@@ -105,7 +105,7 @@ export default {
         search: null,
         time3: null,
         user_id: null,
-        id: null
+        id: 0
       },
       userList: [],
       // Array will be automatically processed with visualization.arrayToDataTable function
@@ -165,7 +165,7 @@ export default {
       if (this.form.user_id) {
         filter.user_id = this.form.user_id;
       }
-      if (this.form.id) {
+      if(this.form.id && this.form.id !== 0){
         filter['forest_access.forest_detail_id'] = this.form.id;
       }
       const returnData = { filter };
@@ -175,9 +175,19 @@ export default {
       const data = await userService.getAll();
       this.userList = data.data;
     },
-    async loadForestList() {
+    async loadForestList(){
       const data = await forestDetailService.getAll();
-      this.forestList = data.data;
+      this.forestList = [];
+      this.forestList.push({
+        area: null,
+        id: 0,
+        latitude: 19.198,
+        longitude: 100.203,
+        name: 'ทั้งหมด'
+      });
+      (data.data).forEach(element => {
+        this.forestList.push(element)
+      });
     }
   }
 };
