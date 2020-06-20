@@ -90,6 +90,7 @@
 <script>
 import { mapState } from 'vuex';
 import DatePicker from 'vue2-datepicker';
+import 'vue2-datepicker/locale/es/th';
 import { GChart } from 'vue-google-charts';
 import reportService from '../../services/reportService';
 import forestDetailService from '../../services/forestDetailService';

@@ -10,6 +10,18 @@
               <div class="row justify-content-md-center">
                 <h1>{{date.day}} {{month[date.month]}} {{date.year}}</h1>
               </div>
+               <div class="form-group row">
+                <label for="inputsubdistricts" class="col-sm-1 col-form-label">พื้นที่ :</label>
+                <div class="col-sm-2">
+                  <select v-model="form.id" class="form-control">
+                    <option
+                      v-for="item in forestList"
+                      :key="item.id"
+                      v-bind:value="item.id"
+                    >{{item.name}}</option>
+                  </select>
+                </div>
+              </div>
               <!-- card section -->
               <div class="row">
                 <div class="col-xl-3 col-sm-6 mb-3">
@@ -22,7 +34,7 @@
                         <h3>จำนวนคนเข้าป่า</h3>
                       </div>
                       <div class="mr-5">
-                        <h1>{{dashboard.dashboard_access_per_day}} คน</h1>
+                        <h1>{{dashboard.dashboard_access_per_day}} คนทั้งหมด</h1>
                       </div>
                     </div>
                     <router-link
@@ -61,18 +73,7 @@
                   </div>
                 </div>
               </div>
-              <div class="form-group row">
-                <label for="inputsubdistricts" class="col-sm-2 col-form-label">พื้นที่ :</label>
-                <div class="col-sm-3">
-                  <select v-model="form.id" class="form-control">
-                    <option
-                      v-for="item in forestList"
-                      :key="item.id"
-                      v-bind:value="item.id"
-                    >{{item.name}}</option>
-                  </select>
-                </div>
-              </div>
+             
               <div class="row">
                 <template v-for="(item, index) in dashboard.dashboard_access_forest_detail">
                   <span :key="index" class="col-xl-3 col-sm-6 mb-3">

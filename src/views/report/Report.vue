@@ -80,6 +80,7 @@
 <script>
 import { mapState } from 'vuex';
 import DatePicker from 'vue2-datepicker';
+import 'vue2-datepicker/locale/es/th';
 import { GChart } from 'vue-google-charts';
 import reportService from '../../services/reportService';
 import forestDetailService from '../../services/forestDetailService';
@@ -152,7 +153,7 @@ export default {
     async loadData() {
       const data = await reportService.getGraph(this.createFilter());
       console.log(data.data);
-      this.chartData = [['เวลา', 'จำนวน']];
+      this.chartData = [['เวลา', 'จำนวนครั้ง']];
       data.data.forEach(element => {
         this.chartData.push([element.time, element.count]);
       });
