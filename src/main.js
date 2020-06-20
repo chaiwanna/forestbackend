@@ -28,7 +28,13 @@ import {
     faUserSecret,
     faTree,
     faBars,
-    faDownload
+    faDownload,
+    faSearch,
+    faQrcode,
+    faMapMarkedAlt,
+    faUserAlt,
+    faChartBar,
+    faHome
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { Datetime } from 'vue-datetime';
@@ -40,7 +46,8 @@ import VueGoogleCharts from 'vue-google-charts'
 import Paginate from 'vuejs-paginate'
 
 
-
+import VueSimpleAlert from "vue-simple-alert";
+import VueQrcode from '@chenfengyuan/vue-qrcode';
 import App from './App.vue';
 import router from './router';
 import store from './store';
@@ -57,11 +64,13 @@ import 'vue2-datepicker/index.css';
 
 import 'vue2-datepicker/locale/zh-cn';
 
+
 Vue.component('paginate', Paginate)
+Vue.component(VueQrcode.name, VueQrcode)
 
 
 Vue.config.productionTip = false;
-
+Vue.use(VueSimpleAlert, { reverseButtons: true });
 Vue.use(require('vue-moment'));
 
 Vue.use(VueMeta, {
@@ -98,7 +107,13 @@ library.add(
     faUserSecret,
     faTree,
     faBars,
-    faDownload
+    faDownload,
+    faSearch,
+    faHome,
+    faUserAlt,
+    faChartBar,
+    faMapMarkedAlt,
+    faQrcode
 );
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.component('simple-layout', SimpleLayout);

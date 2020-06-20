@@ -12,7 +12,29 @@ const state = {
 };
 
 const actions = {
-    login({ dispatch, commit }, { username, password, router }) {
+    loginWithHash({ dispatch, commit }, { username, password, router }) {
+        dispatch('alert/clear', {}, { root: true });
+        commit('startRequest');
+
+        authService
+            .loginHash(username, password)
+            .then(response => {
+                commit('loginSuccess', { authKey: response.data.auth_key });
+                dispatch('alert/success', { showType: 'toast', title: response.message }, { root: true });
+
+                if (response.data.role === 99) {
+                    router.push('/');
+                } else {
+                    router.push('/registerForest');
+                }
+            })
+            .catch(e => {
+                commit('loginFailure');
+
+                dispatch('common/handleServiceException', { e, router }, { root: true });
+            });
+    },
+    login({ dispatch, commit }, { username, password, router, qa = false }) {
         dispatch('alert/clear', {}, { root: true });
         commit('startRequest');
 
@@ -21,11 +43,17 @@ const actions = {
             .then(response => {
                 commit('loginSuccess', { authKey: response.data.auth_key });
                 dispatch('alert/success', { showType: 'toast', title: response.message }, { root: true });
-
+                if (qa) {
+                    const isTrueSet = (qa === 'true');
+                    if (isTrueSet) {
+                        router.push('/quick_access');
+                        return
+                    }
+                }
                 if (response.data.role === 99) {
                     router.push('/');
                 } else {
-                    router.push('/history');
+                    router.push('/registerForest');
                 }
             })
             .catch(e => {
@@ -39,7 +67,7 @@ const actions = {
         commit('logout');
 
         if (!silent) {
-            dispatch('alert/success', { showType: 'toast', title: 'You are successfully logged out.' }, { root: true });
+            dispatch('alert/success', { showType: 'toast', title: 'ออกจากระบบ' }, { root: true });
 
             // https://github.com/vuejs/vue-router/issues/2881#issuecomment-520554378
             router.push('/').catch(_e => {});

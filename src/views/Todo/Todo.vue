@@ -1,24 +1,47 @@
 <template>
   <div class="history">
     <Layout>
-      <!-- <b-form-group id="group-search " label-for="input-search ">
-          <b-form-input
-            id="input-search"
-            v-model="form.search"
-            type="text"
-            placeholder="ค้นหาข้อมูล"
-          ></b-form-input>
-      </b-form-group>-->
       <div class="row">
-        <div class="col-xl-4">
-          <date-picker v-model="form.time3" range v-on:change="showTime()"></date-picker>
-        </div>
-        <div class="col-xl-2">
-          <b-button type="submit" size="sm" variant="success" v-on:click="loadList()">
-            <font-awesome-icon :icon="['fas', 'save']" class="mr-1" />ค้นหา
-          </b-button>
+        <div class="col-xl-12">
+            <div class="form-group row">
+            <label for="inputsubdistricts" class="col-sm-2 col-form-label">ค้นหา :</label>
+            <div class="col-sm-4">
+              <input type="text" v-model="form.search" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputsubdistricts" class="col-sm-2 col-form-label">เลือกช่วงเวลา :</label>
+            <div class="col-sm-4">
+              <date-picker v-model="form.time3" range></date-picker>
+            </div>
+            <b-button
+              class="col-sm-2"
+              type="submit"
+              size="sm"
+              variant="success"
+              v-on:click="loadList()"
+            >
+              <font-awesome-icon icon="search" class="mr-1" />ค้นหา
+            </b-button>
+          </div>
+
+        
+
+          <!-- <div class="form-group row" v-if="user.role === 99">
+            <label for="inputsubdistricts" class="col-sm-2 col-form-label">ค้นหาตามบุคคล :</label>
+            <div class="col-sm-3">
+              <select v-model="form.user_id" class="form-control">
+                <option
+                  v-for="item in userList"
+                  :key="item.id"
+                  v-bind:value="item.id"
+                >{{item.first_name}} {{item.last_name}}</option>
+              </select>
+            </div>
+          </div> -->
         </div>
       </div>
+
       <br />
       <div class="card">
         <h1 class="card-header">
@@ -35,6 +58,7 @@
                 <th>เลขประจำตัวประชาชน</th>
                 <th>ที่อยู่</th>
                 <th>วัตถุประสงค์ในการเข้าไปในพื้นที่ป่า</th>
+                <th style="min-width:70px">พิ้นที่</th>
                 <th>วันที่เข้าป่า</th>
                 <th>เวลาที่เข้าป่า</th>
                 <th>จัดการ</th>
@@ -42,49 +66,38 @@
             </thead>
             <tbody>
               <tr v-for="(item, index) in dataPaginate" :key="index">
-                <td>{{item.user[0].first_name}} {{item.user[0].last_name}}</td>
-                <td>{{item.user[0].numreg}}</td>
-                <td>ที่อยู่</td>
-                <td>{{item.objective}}</td>
+                <td>{{item.user.first_name}} {{item.user.last_name}}</td>
+                <td>{{item.user.numreg}}</td>
+                <td>
+                  <p
+                    v-if="item.user.province_data && item.user.district_data && item.user.subdistrict_data"
+                  >เลขที่ {{item.user.numhome}} หมู่ {{item.user.nummoo}} {{item.user.province_data.name_in_thai}} {{item.user.district_data.name_in_thai}} {{item.user.subdistrict_data.name_in_thai}} {{item.user.subdistrict_data.zip_code}}</p>
+                </td>
+                <td>{{item.objective}} {{item.other}}</td>
+                <td style="min-width:70px">{{item.forest_detail.name}}</td>
                 <td>{{formateDate(item.time)}}</td>
                 <td>{{formateTime(item.time)}}</td>
-                <td>
-                  <!-- <b-button size="sm" variant="danger">
-                    <font-awesome-icon icon="trash" class="mr-1" />
-                  </b-button>-->
-
-                  <b-button size="sm" variant="danger">
+                <td v-if="user.role === 99">
+                  <b-button size="sm" variant="danger" v-on:click="onDelete(item.id)">
                     <font-awesome-icon icon="trash" class="mr-1" />
                   </b-button>
-
-                  <b-button size="sm" variant="danger">
-                    <font-awesome-icon icon="trash" class="mr-1" />
+                </td>
+                <td v-if="user.role !== 99">
+                  <b-button
+                    size="sm"
+                    variant="warning"
+                    v-on:click="onCheckOut(item.id)"
+                    v-if="item.status_id===0"
+                  >
+                    <font-awesome-icon :icon="['fas','sign-out-alt']" class="mr-1" />ลงชื่อออก
                   </b-button>
                 </td>
               </tr>
             </tbody>
           </table>
-          <!-- paginate -->
-          <!-- <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-end">
-              <li class="page-item disabled">
-                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#">1</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#">2</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#">3</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#">Next</a>
-              </li>
-            </ul>
-          </nav>-->
-          <!-- end paginate -->
+          <div class="row justify-content-md-center">
+            <b-button size="sm" variant="primary" v-on:click="addLimit()">โหลดเพิ่มเติม</b-button>
+          </div>
         </div>
       </div>
     </Layout>
@@ -99,6 +112,7 @@ import 'vue2-datepicker/locale/es/th';
 import moment from 'moment';
 import Layout from '../../components/Layout.vue';
 import forestAccessService from '../../services/forestAccessService';
+import userService from '../../services/newUserService';
 import reportService from '../../services/reportService';
 
 export default {
@@ -116,18 +130,34 @@ export default {
         search: null,
         time3: null
       },
-      dataPaginate: []
+      dataPaginate: [],
+      userList: [],
+      limit: 10
     };
   },
   methods: {
     async getDataPaginate(filter = {}) {
       this.dataPaginate = (await forestAccessService.getPaginate(filter)).data.data;
     },
+    async loadUserList() {
+      const data = await userService.getAll();
+      this.userList = data.data;
+    },
+    async deleteRow(id) {
+      await this.$confirm(`ยืนยันการลบข้อมูล?`).then(async () => {
+        const res = await forestAccessService.deleteById(id);
+        return res;
+      });
+    },
+    async onDelete(id) {
+      await this.deleteRow(id);
+      await this.getDataPaginate(this.createFilter());
+    },
     formateDate(date) {
-      return moment(String(date)).format('MM/DD/YYYY');
+      return moment(String(date)).format('DD/MM/YYYY');
     },
     formateTime(date) {
-      return moment(String(date)).format('hh:mm');
+      return moment(String(date)).format('HH:mm');
     },
     showTime() {
       console.log(this.form);
@@ -145,22 +175,40 @@ export default {
       }
       return a;
     },
+    async onCheckOut(id) {
+      await this.$confirm(`ยืนยันการลบข้อมูล?`).then(async () => {
+        const res = await forestAccessService.updateById(id,{status_id:2});
+      this.loadList()
+        return res;
+      });
+    },
     createFilter() {
       const filter = {};
+      filter.filter = {};
       if (this.form.time3) {
         const [one, two] = this.form.time3;
         if (one) {
-          filter.date_from = one;
+          const date = new Date(one);
+          filter.filter.date_from = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} 00:00:01`;
         }
         if (two) {
-          filter.date_too = two;
+          const date = new Date(two);
+          filter.filter.date_too = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} 23:59:59`;
         }
       }
+      filter.limit = this.limit;
+      if (this.form.search) {
+        filter.search = this.form.search;
+      }
+
       if (this.user.role !== 99) {
         filter.user_id = this.user.id;
-        return {'filter':filter};
+        return filter;
       }
-      return {'filter':filter};
+      if (this.form.user_id) {
+        filter.filter.user_id = this.form.user_id;
+      }
+      return filter;
     },
     loadList() {
       if (this.user.role === 99) {
@@ -168,10 +216,15 @@ export default {
       } else {
         this.getDataPaginate(this.createFilter());
       }
+    },
+    addLimit() {
+      this.limit += 10;
+      this.loadList();
     }
   },
   created() {},
   mounted() {
+    this.loadUserList();
     this.createFilter();
     this.loadList();
   },

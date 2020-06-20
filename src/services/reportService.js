@@ -4,8 +4,11 @@ import configService from '@/services/configService';
 // import utils from '@/helper/utils';
 
 export default {
-    async getReport() {
-        const url = `${configService.get('apiUrl')}/report/dash_board`;
+    async getReport(data) {
+        let url = `${configService.get('apiUrl')}/report/dash_board`;
+        if (data) {
+            url = `${configService.get('apiUrl')}/report/dash_board?param=${data}`;
+        }
         return axios
             .get(url, {})
             .then(response => {
@@ -42,5 +45,25 @@ export default {
             .catch(e => {
                 throw e;
             });
+    },
+    async getGraphObj(data) {
+        const url = `${configService.get('apiUrl')}/report/get_graph_obj`;
+        return axios
+            .post(url, data)
+            .then(response => {
+                return response.data;
+            })
+            .catch(e => {
+                throw e;
+            });
+    },
+    async getExcelGraph(data = '') {
+        const url = `${configService.get('apiUrl')}/report/get_graph/excel?param=${data}`;
+        return url
+    },
+    async getExcelObj(data = '') {
+        const url = `${configService.get('apiUrl')}/report/get_graph_obj/excel?param=${data}`;
+        return url
     }
+
 };

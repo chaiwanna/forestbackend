@@ -12,15 +12,13 @@
 
                 <div class="form-group row">
                   <label for="inputsubdistricts" class="col-sm-2 col-form-label">เลือกช่วงเวลา :</label>
-                  <div class="col-sm-3">
+                  <div class="col-sm-4">
                     <date-picker v-model="form.time3" range></date-picker>
                   </div>
-                  <b-button class="col-sm-2" type="submit" size="sm" variant="success" v-on:click="getForest()">
-                  <font-awesome-icon :icon="['fas', 'save']" class="mr-1" />ค้นหา
-                </b-button>
+                  
                 </div>
 
-                <div class="form-group row">
+                <!-- <div class="form-group row">
                   <label for="inputsubdistricts" class="col-sm-2 col-form-label">ค้นหาตามบุคคล :</label>
                   <div class="col-sm-3">
                     <select v-model="form.user_id" class="form-control">
@@ -32,6 +30,23 @@
                     </select>
                   </div>
                   
+                </div> -->
+
+                <div class="form-group row">
+                  <label for="inputsubdistricts" class="col-sm-2 col-form-label">พื้นที่ :</label>
+                  <div class="col-sm-3">
+                    <select v-model="form.id" class="form-control">
+                      <option
+                        v-for="item in forestList"
+                        :key="item.id"
+                        v-bind:value="item.id"
+                      >{{item.name}}</option>
+                    </select>
+                  </div>
+                  <b-button class="col-sm-2" type="submit" size="sm" variant="success" v-on:click="getForest()">
+                  <font-awesome-icon :icon="['fas', 'search']" class="mr-1" />ค้นหา
+                </b-button>
+                  
                 </div>
 
               </div>
@@ -41,7 +56,7 @@
                 <div class="row justify-content-md-center">
                   <div class="col-xl-12">
                     <div id="app">
-                      <longdo-map :center="center" :zoom="10" :lastView="false">
+                      <longdo-map :location="center" :zoom="10" :lastView="false">
                         <longdo-map-marker
                           v-for="(item, i) in markers"
                           :key="i"
@@ -71,6 +86,7 @@ import 'vue2-datepicker/locale/es/th';
 import { LongdoMap, LongdoMapMarker } from 'longdo-map-vue';
 import reportService from '../../services/reportService';
 import userService from '../../services/newUserService';
+import forestDetailService from '../../services/forestDetailService';
 
 
 export default {
@@ -89,15 +105,17 @@ export default {
     return {
       markers: [],
       center: {
-        lon: 19.1,
-        lat: 100.1
+        lon: 100,
+        lat: 17
       },
       form: {
         search: null,
         time3: null,
-        user_id:null
+        user_id:null,
+        id:0
       },
-      userList : []
+      userList : [],
+      forestList : []
 
     };
   },
@@ -107,15 +125,20 @@ export default {
       if (this.form.time3) {
         const [one, two] = this.form.time3;
         if (one) {
-          filter.date_from = one;
+          const date = new Date(one);
+          filter.date_from = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()} 00:00:01`;
         }
         if (two) {
-          filter.date_too = two;
+          const date =  new Date(two);
+          filter.date_too = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()} 23:59:59`;
         }
       }
       if (this.form.user_id) {
           filter.user_id = this.form.user_id;
         
+      }
+      if(this.form.id && this.form.id !== 0){
+        filter.id = this.form.id
       }
       const returnData = { filter };
       return returnData;
@@ -129,14 +152,35 @@ export default {
           title: element.name,
           detail: `จำนวนคนที่เข้าใช้ ${element.count}`
         });
+         this.center= {
+        lon: element.longitude,
+        lat: element.latitude
+      }
+      console.log(this.map);
+      
+      
       });
     },async loadUserList(){
       const data = await userService.getAll();
       this.userList = data.data
+    },async loadForestList(){
+      const data = await forestDetailService.getAll();
+      this.forestList = [];
+      this.forestList.push({
+        area: null,
+        id: 0,
+        latitude: 19.198,
+        longitude: 100.203,
+        name: 'ทั้งหมด'
+      });
+      (data.data).forEach(element => {
+        this.forestList.push(element)
+      });
     }
   },
   mounted() {
     this.getForest();
+    this.loadForestList();
     this.loadUserList();
   }
 };

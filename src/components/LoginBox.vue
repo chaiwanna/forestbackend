@@ -6,7 +6,7 @@
         v-model="form.username"
         type="text"
         required
-        placeholder="Enter username"
+        placeholder="ชื่อผู้ใช้งาน"
         :state="$v.form.username.$dirty ? !$v.form.username.$error : null"
         data-cy="login-username"
         class="from-input input-username"
@@ -17,9 +17,7 @@
         id="input-username-invalid"
         data-cy="login-username-invalid"
         class="invalid-feedback invalid-feedback-username"
-      >
-        Please enter your username or email address.
-      </b-form-invalid-feedback>
+      >โปรดกรอกชื่อผู้ใช้งาน</b-form-invalid-feedback>
     </b-form-group>
 
     <b-form-group id="group-password" label label-for="input-password" description>
@@ -28,7 +26,7 @@
         type="password"
         v-model="form.password"
         required
-        placeholder="Enter password"
+        placeholder="รหัสผ่าน"
         :state="$v.form.password.$dirty ? !$v.form.password.$error : null"
         data-cy="login-password"
         class="from-input input-password"
@@ -39,19 +37,25 @@
         id="input-password-invalid"
         data-cy="login-password-invalid"
         class="invalid-feedback invalid-feedback-password"
-      >
-        Please enter your password.
-      </b-form-invalid-feedback>
+      >โปรดกรอกรหัสผ่าน</b-form-invalid-feedback>
     </b-form-group>
 
     <template v-if="successMessages || errorMessages">
       <b-row class="mb-2">
-        <b-col v-if="successMessages" data-cy="login-success-message" class="text-primary message-col">{{
+        <b-col
+          v-if="successMessages"
+          data-cy="login-success-message"
+          class="text-primary message-col"
+        >
+          {{
           successMessages
-        }}</b-col>
-        <b-col v-if="errorMessages" data-cy="login-error-message" class="text-danger message-col">{{
+          }}
+        </b-col>
+        <b-col v-if="errorMessages" data-cy="login-error-message" class="text-danger message-col">
+          {{
           errorMessages
-        }}</b-col>
+          }}
+        </b-col>
       </b-row>
     </template>
 
@@ -65,13 +69,9 @@
           :disabled="$v.form.$invalid || loading"
         >
           <span class="spinner spinner-white" v-if="loading"></span>
-          Login
+          เข้าสู่ระบบ
         </b-button>
-             <b-button  
-                 href="/register/new"
-                  class="btn btn-secondary btn-block">
-          Register
-        </b-button>
+        <b-button :to="{path:`/register/new${isQA}`}" class="btn btn-secondary btn-block">ลงทะเบียน</b-button>
       </b-col>
     </b-row>
   </b-form>
@@ -80,6 +80,7 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
 import { required, minLength } from 'vuelidate/lib/validators';
+import CryptoJS from 'crypto-js';
 import router from '@/router';
 
 export default {
@@ -89,7 +90,8 @@ export default {
       form: {
         username: '',
         password: ''
-      }
+      },
+      isQA:''
     };
   },
   validations: {
@@ -108,15 +110,23 @@ export default {
       // Already logged in
       this.logout({ router, silent: true });
     }
+    if (this.$route.query.user) {
+      // Decrypt
+      const data = this.$route.query.user;
+      const decryptedData = JSON.parse(this.dec(data));
+      this.loginWithHash({ username: decryptedData.username, password: decryptedData.password_hash, router });
+    }
+    if(this.$route.query.qa){
+      this.isQA = `?qa=true`
+    }
   },
-   
   computed: {
     ...mapGetters('alert', ['errorMessages', 'successMessages']),
     ...mapState('auth', ['loading']),
     ...mapGetters('auth', ['isLoggedIn'])
   },
   methods: {
-    ...mapActions('auth', ['login', 'logout']),
+    ...mapActions('auth', ['login', 'logout', 'loginWithHash']),
     onSubmit() {
       this.$v.form.$touch();
       if (this.$v.form.$anyError) {
@@ -124,7 +134,14 @@ export default {
       }
 
       // Form submit logic
-      this.login({ username: this.form.username, password: this.form.password, router });
+      this.login({ username: this.form.username, password: this.form.password, router , qa:this.$route.query.qa });
+    },
+    dec(cipherText) {
+      const reb64 = CryptoJS.enc.Hex.parse(cipherText);
+      const bytes = reb64.toString(CryptoJS.enc.Base64);
+      const decrypt = CryptoJS.AES.decrypt(bytes, 'SECRET');
+      const plain = decrypt.toString(CryptoJS.enc.Utf8);
+      return plain;
     }
   }
 };

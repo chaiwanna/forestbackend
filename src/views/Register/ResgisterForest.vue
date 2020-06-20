@@ -20,14 +20,22 @@
                   </template>
 
                   <select v-model="form.selected_zone" class="form-control">
-                    <option v-for="item in zone" :key="item.name" v-bind:value="item.name">{{item.name}}</option>
+                    <option
+                      v-for="item in zone"
+                      :key="item.name"
+                      v-bind:value="item.id"
+                    >{{item.name}}</option>
                   </select>
 
                   <b-form-invalid-feedback id="input-selected_zone-invalid">โซนบริเวณป่าไม้ที่จะเข้า</b-form-invalid-feedback>
                 </b-form-group>
 
                 <b-form-group label="วัตถุประสงค์ในการเข้าป่า">
-                  <b-form-checkbox-group id="checkbox-group-2" v-model="form.objective" name="flavour-2">
+                  <b-form-checkbox-group
+                    id="checkbox-group-2"
+                    v-model="form.objective"
+                    name="flavour-2"
+                  >
                     <b-form-checkbox value="ผักหวาน">ผักหวาน</b-form-checkbox>
                     <b-form-checkbox value="ไข่มดแดง">ไข่มดแดง</b-form-checkbox>
                     <b-form-checkbox value="หน่อไม้">หน่อไม้</b-form-checkbox>
@@ -35,7 +43,7 @@
                     <b-form-checkbox value="เห็ดลม">เห็ดลม</b-form-checkbox>
                     <br />
                     <b-form-checkbox value="เห็ดกระด้าง">เห็ดกระด้าง</b-form-checkbox>
-                    <b-form-checkbox value="เห็ดถอบ">เห็ดถอบ</b-form-checkbox>
+                    <b-form-checkbox value="เห็ดเผาะ">เห็ดเผาะ</b-form-checkbox>
                     <b-form-checkbox value="สมุนไพร">สมุนไพร</b-form-checkbox>
                     <b-form-checkbox value="ผลไม้ป่า">ผลไม้ป่า</b-form-checkbox>
                     <b-form-checkbox value="ไม้ฟืน">ไม้ฟืน</b-form-checkbox>
@@ -43,12 +51,10 @@
                     <b-form-checkbox value="ยอดผัก">ยอดผัก</b-form-checkbox>
                     <b-form-checkbox value="ใบไม้">ใบไม้</b-form-checkbox>
                     <b-form-checkbox value="ไม้ไผ่">ไม้ไผ่</b-form-checkbox>
+                    <b-form-checkbox value="สำรวจป่าไม้(ท่องเที่ยว)">สำรวจป่าไม้(ท่องเที่ยว)</b-form-checkbox>
                   </b-form-checkbox-group>
                 </b-form-group>
-                <div>
-                  Selected:
-                  <strong>{{ form.objective }}</strong>
-                </div>
+                <b-form-input v-model="form.other" placeholder="อื่นๆ"></b-form-input>
 
                 <template v-if="errorMessages">
                   <b-row class="mb-2">
@@ -56,19 +62,18 @@
                   </b-row>
                 </template>
 
-                <b-row>
-                  <b-col>
-                    <b-button type="submit" size="sm" variant="success" :disabled="loading">
-                      <span class="spinner spinner-white" v-if="loading"></span>
-                      <font-awesome-icon :icon="['fas', 'save']" class="mr-1" />Save
-                    </b-button>
-                  </b-col>
-                  <b-col class="text-right">
-                    <b-button size="sm" variant="warning" href="/">
-                      <font-awesome-icon :icon="['fas', 'long-arrow-alt-left']" class="mr-1" />กลับ
-                    </b-button>
-                  </b-col>
-                </b-row>
+                <div class="forn-group">
+                  <button type="submit" class="btn btn-success btn-block" :disabled="loading">
+                    <span class="spinner spinner-white" v-if="loading"></span>
+                    บันทึก
+                  </button>
+                  <button
+                    type="button"
+                    @click="onRedirectToHome()"
+                    class="btn btn-secondary btn-block"
+                    
+                  >ยกเลิก</button>
+                </div>
               </b-form>
             </div>
           </div>
@@ -119,7 +124,7 @@ export default {
       form: {
         selected_zone: 0,
         other: null,
-        objective:[]
+        objective: []
       },
       zone: [{ id: 0, name: 'เลือกโซนบริเวณป่าไม้ที่จะเข้า' }]
     };
@@ -174,6 +179,9 @@ export default {
     return { form: formValidation };
   },
   mounted() {
+    if (this.$route.query.forest_id) {
+      this.form.selected_zone = this.$route.query.forest_id;
+    }
     this.getZone();
     this.getUser(this.user.id);
     this.$nextTick(async () => {
@@ -189,7 +197,6 @@ export default {
     });
   },
   computed: {
-    
     metaDescription() {
       return this.formType === 'new' ? 'Add new user' : 'Update user';
     },
@@ -207,40 +214,62 @@ export default {
 
       return arr[index].NAME;
     },
-     getUser(id) {
-      axios.get(`http://localhost:3000/staff/${id}`).then(response => { 
-        console.log(response.data);
-      });
+    getUser(id) {
+      axios.get(`http://localhost:3000/staff/${id}`);
     },
 
     getZone() {
       axios.get('http://localhost:3000/getregisterforest').then(response => {
         this.zone = this.zone.concat(response.data.data);
-        console.log(response.data.data);
+        // console.log(response.data.data);
       });
     },
 
     postforest(id) {
-      axios.post('http://localhost:3000/getregisterforest',id).then(response => {  
-        console.log(response.data.data);
+      axios.post('http://localhost:3000/getregisterforest', id).then(response => {
+        console.log(response);
+        if (this.$route.query.forest_id) {
+          let id = localStorage.forestAccessByQuickAccess; 
+          if (id === undefined) {
+            id = ''
+          }
+          id +=`${response.data.data.id},`
+          localStorage.forestAccessByQuickAccess = id;
+        }
+        if (response.data.success === true) {
+          this.makeToast('บันทึกสำเร็จ', 'success');
+          this.resetPage();
+        } else {
+          this.makeToast('บันทึกผิดพลาด', 'warning');
+        }
       });
     },
-  onSubmit() {
-    const objectiveArr =this.form.objective;
-    const objectiveString = objectiveArr.toString();
-      const userforest = {
-        USER_IDUSER : this.user.id,
-        FOREST_DETAIL_ID: this.form.selected_zone,
-        OBJECTIVE: objectiveString
+    resetPage() {
+      this.form.selected_zone = 0;
+      this.form.other = null;
+      this.form.objective = [];
+    },
+    makeToast(massage, variant = null) {
+      const config = {
+        title: `ข้อความ`,
+        variant,
+        solid: true
       };
-      console.log(userforest);
-      
+      this.$bvToast.toast(massage, config);
+    },
+    onSubmit() {
+      const userforest = {
+        user_id: this.user.id,
+        FOREST_DETAIL_ID: this.form.selected_zone,
+        OBJECTIVE: this.form.objective.toString(),
+        OTHER: this.form.other
+      };
+
       this.postforest(userforest);
-      window.location.reload();
-
-      // this.$emit('add', { user });
-
       return false;
+    },
+    onRedirectToHome() {
+      this.$router.push('/quick_access');
     },
     setFormPermissions() {
       if (this.formLoaded) {
@@ -259,7 +288,6 @@ export default {
   },
 
   watch: {
-
     // 'form.selected_subdistricts': function(val) {},
     user(_newValue, _oldValue) {
       if (!this.user.id) {
@@ -304,6 +332,6 @@ h1 {
   padding-right: 5%;
 }
 .btn {
-  margin-top: 30px;
+  margin-top: 10px;
 }
 </style>

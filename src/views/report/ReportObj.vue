@@ -13,10 +13,11 @@
                   <div class="col-sm-4">
                     <date-picker v-model="form.time3" range></date-picker>
                   </div>
-                 
+
+                
                 </div>
 
-                <div v-if="user.role === 99">
+                <!-- <div v-if="user.role === 99">
                   <div class="form-group row">
                     <label for="inputsubdistricts" class="col-sm-2 col-form-label">ค้นหาตามบุคคล :</label>
                     <div class="col-sm-3">
@@ -29,9 +30,10 @@
                       </select>
                     </div>
                     <div class="col-sm-1"></div>
-                  
+
+                   
                   </div>
-                </div>
+                </div>-->
                 <div class="form-group row">
                   <label for="inputsubdistricts" class="col-sm-2 col-form-label">พื้นที่ :</label>
                   <div class="col-sm-3">
@@ -43,32 +45,40 @@
                       >{{item.name}}</option>
                     </select>
                   </div>
-                   <b-button class="col-sm-1" type="submit" size="sm" variant="success" v-on:click="loadData()">
-                  <font-awesome-icon :icon="['fas', 'search']" class="mr-1" />ค้นหา
-                </b-button>
+                    <b-button
+                    class="col-sm-1"
+                    type="submit"
+                    size="sm"
+                    variant="success"
+                    v-on:click="loadData()"
+                  >
+                    <font-awesome-icon :icon="['fas', 'search']" class="mr-1" />ค้นหา
+                  </b-button>
                 </div>
               </div>
             </div>
-              <b-button
-                      class="col-sm-2"
-                      type="submit"
-                      size="sm"
-                      variant="success"
-                      v-on:click="download()"
-                    >
-                      <font-awesome-icon icon="download" class="mr-1" />ดาวโหลด excel
-                    </b-button>
+            <b-button
+              class="col-sm-2"
+              type="submit"
+              size="sm"
+              variant="success"
+              v-on:click="download()"
+            >
+              <font-awesome-icon icon="download" class="mr-1" />ดาวโหลด excel
+            </b-button>
             <div class="row">
               <div class="col-md-12">
                 <GChart
                   v-if="chartData.length > 1"
-                  type="LineChart"
+                  type="ColumnChart"
                   :data="chartData"
                   :options="chartOptions"
                 />
                 <h2 v-if="chartData.length <= 1">ไม่พบข้อมูล</h2>
               </div>
+              
             </div>
+            
           </div>
         </div>
       </div>
@@ -100,7 +110,7 @@ export default {
         search: null,
         time3: null,
         user_id: null,
-        id:0
+        id: 0
       },
       userList: [],
       // Array will be automatically processed with visualization.arrayToDataTable function
@@ -112,13 +122,12 @@ export default {
           // subtitle: 'Sales, Expenses, and Profit: 2014-2017'
         },
         vAxis: { minValue: 0 }
-      },      forestList : []
-
+      },
+      forestList: []
     };
   },
   mounted() {
-        this.loadForestList();
-
+    this.loadForestList();
     this.loadData();
     this.loadUserList();
   },
@@ -126,36 +135,22 @@ export default {
     download() {
       let a;
       if (this.user.role === 99) {
-        reportService.getExcelGraph(JSON.stringify(this.createFilter())).then(res => {
+        reportService.getExcelObj(JSON.stringify(this.createFilter())).then(res => {
           window.open(res);
         });
       } else {
-        reportService.getExcelGraph(JSON.stringify(this.createFilter())).then(res => {
+        reportService.getExcelObj(JSON.stringify(this.createFilter())).then(res => {
           window.open(res);
         });
       }
       return a;
     },
-    async loadForestList(){
-      const data = await forestDetailService.getAll();
-      this.forestList = [];
-      this.forestList.push({
-        area: null,
-        id: 0,
-        latitude: 19.198,
-        longitude: 100.203,
-        name: 'ทั้งหมด'
-      });
-      (data.data).forEach(element => {
-        this.forestList.push(element)
-      });
-    },
     async loadData() {
-      const data = await reportService.getGraph(this.createFilter());
+      const data = await reportService.getGraphObj(this.createFilter());
       console.log(data.data);
-      this.chartData = [['เวลา', 'จำนวนครั้ง']];
+      this.chartData = [['วัตถุประสงค์', 'จำนวน']];
       data.data.forEach(element => {
-        this.chartData.push([element.time, element.count]);
+        this.chartData.push([element.name, element.count]);
       });
       console.log(this.chartData);
     },
@@ -176,7 +171,7 @@ export default {
         filter.user_id = this.form.user_id;
       }
       if(this.form.id && this.form.id !== 0){
-        filter['forest_access.forest_detail_id'] = this.form.id
+        filter['forest_access.forest_detail_id'] = this.form.id;
       }
       const returnData = { filter };
       return returnData;
@@ -184,6 +179,20 @@ export default {
     async loadUserList() {
       const data = await userService.getAll();
       this.userList = data.data;
+    },
+    async loadForestList(){
+      const data = await forestDetailService.getAll();
+      this.forestList = [];
+      this.forestList.push({
+        area: null,
+        id: 0,
+        latitude: 19.198,
+        longitude: 100.203,
+        name: 'ทั้งหมด'
+      });
+      (data.data).forEach(element => {
+        this.forestList.push(element)
+      });
     }
   }
 };

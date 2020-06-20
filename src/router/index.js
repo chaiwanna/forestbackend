@@ -27,6 +27,15 @@ const router = new Router({
             }
         },
         {
+            path: '/login:user',
+            name: 'loginUser',
+            component: () =>
+                import ( /* webpackChunkName: "login" */ '../views/Login.vue'),
+            meta: {
+                layout: 'simple-layout'
+            }
+        },
+        {
             path: '/history',
             name: 'history',
             component: () =>
@@ -184,6 +193,26 @@ const router = new Router({
             meta: {
                 layout: 'backend-layout',
                 requiresAuth: true
+            }
+        },
+        {
+            path: '/report/obj',
+            name: 'report_obj',
+            component: () =>
+                import ( /* webpackChunkName: "setting" */ '../views/report/ReportObj.vue'),
+            meta: {
+                layout: 'backend-layout',
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/quick_access',
+            name: 'quick_access',
+            component: () =>
+                import ( /* webpackChunkName: "setting" */ '../views/quickAccess/QuickAccess.vue'),
+            meta: {
+                layout: 'backend-layout'
+                    // requiresAuth: true
             }
         }
 
