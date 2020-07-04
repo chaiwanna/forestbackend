@@ -124,6 +124,7 @@
 <script>
 import axios from 'axios';
 import _ from 'lodash';
+import configService from '@/services/configService';
 import { mapState } from 'vuex';
 import CryptoJS from 'crypto-js';
 import User from '../../model/user';
@@ -173,7 +174,7 @@ export default {
       return _.includes(this.user.permission_keys, permissionKey);
     },
     getUser(id) {
-      axios.get(`http://localhost:3000/staff/${id}`).then(response => {
+      axios.get(`${configService.get('apiUrl')}/staff/${id}`).then(response => {
         // this.user = response.data.data;
         this.form.NUMREG = response.data.data.numreg;
         this.form.TEL = response.data.data.tel;
@@ -193,23 +194,23 @@ export default {
       });
     },
     updateUser(form, userid) {
-      axios.patch(`http://localhost:3000/staff/${userid}`, form);
+      axios.patch(`${configService.get('apiUrl')}/staff/${userid}`, form);
       this.makeToast('บันทึกสำเร็จ','success')
     },
     getProvinces() {
-      axios.get('http://localhost:3000/country/provinces').then(response => {
+      axios.get(`${configService.get('apiUrl')}/country/provinces`).then(response => {
         this.provinces = this.provinces.concat(response.data.data);
         console.log(this.provinces);
       });
     },
     getDistricts(id) {
-      axios.get(`http://localhost:3000/country/districts/${id}`).then(response => {
+      axios.get(`${configService.get('apiUrl')}/country/districts/${id}`).then(response => {
         this.districts = this.districts.concat(response.data.data);
         console.log(this.districts);
       });
     },
     getSubdistricts(id) {
-      axios.get(`http://localhost:3000/country/subdistricts/${id}`).then(response => {
+      axios.get(`${configService.get('apiUrl')}/country/subdistricts/${id}`).then(response => {
         // console.log(response);
         this.subdistricts = this.subdistricts.concat(response.data.data);
         console.log(this.subdistricts);
@@ -255,7 +256,7 @@ export default {
     },
     
     getDataQR() {
-      this.qrUrl = 'http://localhost:8081/login?user=';
+      this.qrUrl = `${configService.get('appUrl')}/login?user=`;
       const data = this.qrcodeData;
       // Encrypt
       const encryptedData = this.enc(JSON.stringify(data))

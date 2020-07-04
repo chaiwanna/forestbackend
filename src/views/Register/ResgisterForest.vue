@@ -87,6 +87,7 @@
 <script>
 import { email, required, minLength, maxLength } from 'vuelidate/lib/validators';
 import { mapGetters, mapState } from 'vuex';
+import configService from '@/services/configService';
 import _ from 'lodash';
 import User from '@/model/user';
 import utils from '@/helper/utils';
@@ -215,18 +216,18 @@ export default {
       return arr[index].NAME;
     },
     getUser(id) {
-      axios.get(`http://localhost:3000/staff/${id}`);
+      axios.get(`${configService.get('apiUrl')}/staff/${id}`);
     },
 
     getZone() {
-      axios.get('http://localhost:3000/getregisterforest').then(response => {
+      axios.get(`${configService.get('apiUrl')}/getregisterforest`).then(response => {
         this.zone = this.zone.concat(response.data.data);
         // console.log(response.data.data);
       });
     },
 
     postforest(id) {
-      axios.post('http://localhost:3000/getregisterforest', id).then(response => {
+      axios.post(`${configService.get('apiUrl')}/getregisterforest`, id).then(response => {
         console.log(response);
         if (this.$route.query.forest_id) {
           let id = localStorage.forestAccessByQuickAccess; 

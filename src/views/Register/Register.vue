@@ -289,11 +289,11 @@
 <script>
 import { email, required, minLength, maxLength } from 'vuelidate/lib/validators';
 import { mapGetters, mapState } from 'vuex';
+import configService from '@/services/configService';
 import _ from 'lodash';
 import moment from 'moment';
 import User from '@/model/user';
 import utils from '@/helper/utils';
-import configService from '@/services/configService';
 import axios from 'axios';
 
 export default {
@@ -489,26 +489,26 @@ export default {
     },
 
     getProvinces() {
-      axios.get('http://localhost:3000/country/provinces').then(response => {
+      axios.get(`${configService.get('apiUrl')}/country/provinces`).then(response => {
         this.provinces = this.provinces.concat(response.data.data);
         console.log(response.data.data);
       });
     },
     getDistricts(id) {
-      axios.get(`http://localhost:3000/country/districts/${id}`).then(response => {
+      axios.get(`${configService.get('apiUrl')}/country/districts/${id}`).then(response => {
         this.districts = this.districts.concat(response.data.data);
         // console.log(this.districts);
       });
     },
     getSubdistricts(id) {
-      axios.get(`http://localhost:3000/country/subdistricts/${id}`).then(response => {
+      axios.get(`${configService.get('apiUrl')}/country/subdistricts/${id}`).then(response => {
         // console.log(response);
         this.subdistricts = this.subdistricts.concat(response.data.data);
         // console.log(this.subdistricts);
       });
     },
     postUser(id) {
-      axios.post(`http://localhost:3000/staff`, id).then(response => {
+      axios.post(`${configService.get('apiUrl')}/staff`, id).then(response => {
         console.log(response);
       });
     },

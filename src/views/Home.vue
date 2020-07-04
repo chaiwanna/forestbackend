@@ -120,7 +120,7 @@
     >
       <div class="row justify-content-md-center">
       <qrcode
-        :value="`http://localhost:8081/quick_access?forest_id=${selectQR}`"
+        :value="`${configService.get('appUrl')}/quick_access?forest_id=${selectQR}`"
         :options="{ width: 200 }"
       ></qrcode>
       </div>

@@ -1,8 +1,9 @@
 {
-  "apiUrl": "http://localhost:3000",
-  "format": {
-    "timeZone": "Australia/Melbourne",
-    "dateTime": "YYYY-MM-DD HH:mm:ss",
-    "pickerDateTime": "yyyy-MM-dd HH:mm"
-  }
+    "appUrl": "http://localhost:3000",
+    "apiUrl": "http://localhost:3000",
+    "format": {
+        "timeZone": "Australia/Melbourne",
+        "dateTime": "YYYY-MM-DD HH:mm:ss",
+        "pickerDateTime": "yyyy-MM-dd HH:mm"
+    }
 }
